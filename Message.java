@@ -1,21 +1,13 @@
 
-public class Message{
+public abstract class Message{
   public String messageType;
 
   public Message(String messageType){
     this.messageType = messageType;
   }
 
-  public boolean equals(Message message){
-    return true;
-  }
-
-  public String serializeMessage(){
-    return "MESSAGETYPE " + this.messageType;
-  }
-
-  public static Message deserializeMessage(String message) throws UnknownHostException{
-    return null;
-  }
+  abstract boolean equals(Message message);
+  abstract String serializeMessage();
+  abstract static Message deserializeMessage(String message) throws UnknownHostException;
 
 }

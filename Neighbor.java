@@ -15,18 +15,20 @@ public class Neighbor{
 
 	private String chordID;
 
-  //Initialize Neighbor with connection accepted by Member's server socket
+  //Initialize Neighbor with connection accepted by Member's receiving socket
   public Neighbor(Socket socket) throws IOException{
-    sendSocket = socket;
-    IP = sendSocket.getInetAddress();
-    sendPort = sendSocket.getPort();
-    from = new BufferedReader(new InputStreamReader(sendSocket.getInputStream()));
+    this.sendSocket = socket;
+    this.IP = sendSocket.getInetAddress();
+    this.sendPort = sendSocket.getPort();
+    this.from = new BufferedReader(new InputStreamReader(sendSocket.getInputStream()));
+    this.chordID = Member.generateChordID(this.IP);
   }
 
   //Inititalize Neighbor with information to initiate a connection from the Member
   public Neighbor(String IP, int receivePort) throws UnknownHostException{
     this.IP = InetAddress.getByName(IP);
     this.receivePort = receivePort;
+    this.chordID = Member.generateChordID(this.IP);
   }
 
   //Define Neighbor equality as having the same IP address
