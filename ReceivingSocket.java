@@ -37,7 +37,7 @@ public static class ReceivingSocket implements Runnable{
     System.out.println("Unimplemented");
   }
 
-  //Process new successor notification
+  //Process new successor notification (includes moving files to new successor)
 
   //Process request for my finger fingerTable
 

@@ -90,7 +90,7 @@ public class Member {
 
 	/* Main workflow */
 	public static void main(String[] args){
-		Member member = new Member();
+		Member member = new Member(4000);
 
 		//Add any preloaded knowledge about Neighbors here
 

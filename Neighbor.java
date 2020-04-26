@@ -36,6 +36,10 @@ public class Neighbor{
     return IP.getHostAddress().equals(neighbor.IP.getHostAddress());
   }
 
+  public String serializeNeighbor(){
+    return "["+ +"]";
+  }
+
 
   /*Change socket connection state*/
 
