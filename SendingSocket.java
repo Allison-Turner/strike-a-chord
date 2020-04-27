@@ -13,10 +13,10 @@ public class SendingSocket implements Runnable{
       //Connect to a Neighbor, send a serialized message, and disconnect
       recipient.pushMessage(message.serializeMessage());
       recipient.disconnect();
-      //Keep all complexity in ReceivingSocket so things don't get confusing
+      //Keep all complexity in ReceivingSocket and Member so things don't get too confusing
     }
     catch(Exception e) {
-      System.err.println("Sending socket error");
+      System.err.println("Send socket error");
       e.printStackTrace();
     }
   }

@@ -14,10 +14,21 @@ public static class ReceivingSocket implements Runnable{
 
       while(true) {
         Neighbor sender = new Neighbor(serverSocket.accept());
-        Message received = Message.deserializeMessage(neighbor.getMessage());
+        Message received = Message.deserialize(neighbor.getMessage());
 
-        //Call a message processing function based on message type, using a generic for now
-        processMessage(received);
+        //Call a message processing function
+        if(received.messageType.equals("FILESEARCH")){
+          processFileSearch(received);
+        }
+        else if(received.messageType.equals("WHO-IS-SUCCESSOR")){
+          processSuccessorRequest(received);
+        }
+        else if(received.messageType.equals("SUCCESSOR-UPDATE")){
+          processSuccessorUpdate(received);
+        }
+        else if(received.messageType.equals("READ-FINGERTABLE")){
+          processFingerTableReadRequest(received);
+        }
 
         //Perform periodic checks defined by Chord's join, leave, and stabilization processes
         if((System.currentTimeMillis() - this.lastStabilize) > 60000){
@@ -27,22 +38,28 @@ public static class ReceivingSocket implements Runnable{
       }
     }
     catch(Exception e) {
-      System.err.println("Receiving socket error");
+      System.err.println("Receive socket error");
       e.printStackTrace();
     }
   }
 
-  //Generic placeholder
-  private void processMessage(Message message){
-    System.out.println("Unimplemented");
+  //Process new successor notification (includes moving files to new successor)
+  private void processSuccessorUpdate(RoutingInfoRequest message){
+
   }
 
-  //Process new successor notification (includes moving files to new successor)
-
   //Process request for my finger fingerTable
+  private void processFingerTableReadRequest(RoutingInfoRequest message){
+
+  }
 
   //Process request for my immediate successor
+  private void processSuccessorRequest(RoutingInfoRequest message){
+
+  }
 
   //Process file search request
+  private void processFileSearch(FileSearchMessage message){
 
+  }
 }

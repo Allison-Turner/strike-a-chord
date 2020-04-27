@@ -84,7 +84,9 @@ public class Member {
 
 	 private void stabilize(){
 		 //Request predecessor's successor
+		 this.pool.execute(new SendingSocket(predecessor, new RoutingInfoRequest("WHO-IS-SUCCESSOR", this)));
 		 //Check finger table entries
+		 
 	 }
 
 
