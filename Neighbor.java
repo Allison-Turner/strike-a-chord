@@ -37,7 +37,22 @@ public class Neighbor{
   }
 
   public String serializeNeighbor(){
-    return "["+ +"]";
+    return "["+ this.IP.toString()+"," + this.receivePort + "]";
+  }
+
+  public static Neighbor deserializeNeighbor(String neighbor){
+    int start;
+    int end;
+
+    start = neighbor.indexOf("[");
+    end = neighbor.indexOf(",");
+    String nIP = neighbor.substring(start, end).trim();
+
+    start = end
+    end = neighbor.indexOf("]", start);
+    int rPort = Integer.parseInt(neighbor.substring(start, end).trim());
+
+    return new Neighbor(nIP, rPort);
   }
 
 

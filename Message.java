@@ -10,11 +10,11 @@ public abstract class Message{
     int start;
     int end;
 
-    start = message.indexOf("(");
-    end = message.indexOf(")");
+    start = message.indexOf("[");
+    end = message.indexOf("]");
     String type = message.substring(start, end);
 
-    if(type.equals("FILESEARCH")){
+    if(type.equals("FILESEARCH") || type.equals("SEARCHRESPONSE")){
       return FileSearchMessage.deserializeMessage(message);
     }
     else if(type.equals("WHO-IS-SUCCESSOR") || type.equals("READ-FINGERTABLE") || type.equals("SUCCESSOR-UPDATE")){

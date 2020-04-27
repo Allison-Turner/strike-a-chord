@@ -17,25 +17,21 @@ public class RoutingInfoRequest extends Message{
   }
 
   public String serializeMessage(){
-    return "(" + this.messageType + ") from originator [" + this.originator.IP.toString() + ", " + this.originator.receivePort + "]";
+    return "[" + this.messageType + "] from originator " + this.originator.serializeNeighbor();
   }
 
   public static RoutingInfoRequest deserializeMessage(String message) throws UnknownHostException{
     int start;
     int end;
 
-    start = message.indexOf("(");
-    end = message.indexOf(")");
+    start = message.indexOf("[");
+    end = message.indexOf("]");
     String type = message.substring(start, end);
 
-    start = message.indexOf("[");
-    end = message.indexOf(",");
-    String originatorIP = message.substring(start, end);
+    start = message.indexOf("[", end);
+    end = message.indexOf("]", start);
+    Neighbor sender = Neighbor.deserializeNeighbor(message.substring(start, end).trim());
 
-    start = end;
-    end = message.indexOf("]");
-    int originatorReceivePort = Integer.parseInt(message.substring(start, end));
-
-    return new RoutingInfoRequest(type, new Neighbor(originatorIP, originatorReceivePort));
+    return new RoutingInfoRequest(type, sender);
   }
 }

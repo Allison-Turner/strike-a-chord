@@ -3,8 +3,12 @@ public class FileSearchMessage extends Message{
   public String chordID;
   public Neighbor searchOriginator;
 
-  public FileSearchMessage(String fileName, Neighbor searchOriginator){
-    super("FILESEARCH");
+  /* Message types
+  FILESEARCH
+  SEARCHRESPONSE
+  */
+  public FileSearchMessage(String type, String fileName, Neighbor searchOriginator){
+    super(type);
     this.fileName = fileName;
     this.searchOriginator = searchOriginator;
     this.chordID = Member.generateChordID(this.fileName);
@@ -15,7 +19,7 @@ public class FileSearchMessage extends Message{
   }
 
   public String serializeMessage(){
-    return "(" + this.messageType + ") from originator [" + searchOriginator.IP.toString() + ", " + searchOriginator.receivePort + "] for file {" + this.fileName + "}"
+    return "[" + this.messageType + "] from originator " + searchOriginator.serializeNeighbor() + " for file [" + this.fileName + "]"
   }
 
   public static FileSearchMessage deserializeMessage(String message) throws UnknownHostException{
@@ -23,17 +27,17 @@ public class FileSearchMessage extends Message{
     int end;
 
     start = message.indexOf("[");
-    end = message.indexOf(",");
-    String originatorIP = message.substring(start, end);
+    end = message,indexOf("]");
+    String mType = message.substring(start, end).trim();
 
-    start = end;
-    end = message.indexOf("]");
-    int originatorReceivePort = Integer.parseInt(message.substring(start, end));
+    start = message.indexOf("[", end);
+    end = message.indexOf("]", start);
+    Neighbor sender = Neighbor.deserializeNeighbor(message.substring(start, end).trim());
 
-    start = message.indexOf("{");
-    end = message.indexOf("}");
-    String file = message.substring(start, end);
+    start = message.indexOf("[", end);
+    end = message.indexOf("]", start);
+    String file = message.substring(start, end).trim();
 
-    return new FileSearchMessage(file, new Neighbor(originatorIP, originatorReceivePort));
+    return new FileSearchMessage(mType, file, sender);
   }
 }
