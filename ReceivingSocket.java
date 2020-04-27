@@ -1,5 +1,5 @@
 /* Receive all messages, process them, and handle lookup (file search or member search) logic. */
-public static class ReceivingSocket implements Runnable{
+public class ReceivingSocket implements Runnable {
   private Member myself;
   private long lastStabilize;
 
@@ -9,27 +9,21 @@ public static class ReceivingSocket implements Runnable{
   }
 
   public void run() {
+ 
     try {
-      ServerSocket serverSocket = new ServerSocket(myself.receivePort);
-
+      serverSocket = myself.getListener(); 
       while(true) {
-        Neighbor sender = new Neighbor(serverSocket.accept());
-        Message received = Message.deserialize(neighbor.getMessage());
-
-        //Call a message processing function
-        if(received.messageType.equals("FILESEARCH")){
-          processFileSearch(received);
+      
+        ObjectInputStream in = new ObjectInputStream(serverSocket.getInputStream());
+        Object inObject = in.readObject(); 
+        
+        if (inObject instanceof Message) {
+         System.out.println("I got a message!!"); 
+        // .. put more recieving messages here 
+        } else {
+         System.err.println("Recieved an object of unknown message type"); 
         }
-        else if(received.messageType.equals("WHO-IS-SUCCESSOR")){
-          processSuccessorRequest(received);
-        }
-        else if(received.messageType.equals("SUCCESSOR-UPDATE")){
-          processSuccessorUpdate(received);
-        }
-        else if(received.messageType.equals("READ-FINGERTABLE")){
-          processFingerTableReadRequest(received);
-        }
-
+        
         //Perform periodic checks defined by Chord's join, leave, and stabilization processes
         if((System.currentTimeMillis() - this.lastStabilize) > 60000){
           lastStabilize = System.currentTimeMillis();
@@ -50,7 +44,9 @@ public static class ReceivingSocket implements Runnable{
 
   //Process request for my finger fingerTable
   private void processFingerTableReadRequest(RoutingInfoRequest message){
-
+  
+      Message m = new RequestFingerTable(myInfo, predecessor); 
+      this.pool.execute(new SendingSocket(m));
   }
 
   //Process request for my immediate successor
@@ -62,4 +58,8 @@ public static class ReceivingSocket implements Runnable{
   private void processFileSearch(FileSearchMessage message){
 
   }
+  
+  //Process finger table update request
+  
+ 
 }
