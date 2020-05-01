@@ -23,14 +23,20 @@ public class Member {
 
 	public Member(int receivePort, MemberInfo successor, MemberInfo predecessor){
       this.myInfo = new MemberInfo(receivePort);
-      this.listener = new ServerSocket(receivePort);
-		this.fingerTable = new MemberInfo[myInfo.chordIDLength];
-		//Maintaing a list of O(log n) successors maintains fast searches even in the case of failure rates >=0.5
-		this.successors = new MemberInfo[(int) Math.floor(Math.log(Math.pow(2, myInfo.chordIDLength)))];
-		successors[0] = successor;
-		this.predecessor = predecessor;
+      
+      try {
+    	  this.listener = new ServerSocket(receivePort);
+      } catch (IOException e) {
+    	  System.err.println("Member " + myInfo.chordID + " failed to set up its listener correctly..");
+      }
+      
+      this.fingerTable = new MemberInfo[myInfo.chordIDLength];
+      //Maintaining a list of O(log n) successors maintains fast searches even in the case of failure rates >=0.5
+      this.successors = new MemberInfo[(int) Math.floor(Math.log(Math.pow(2, myInfo.chordIDLength)))];
+      successors[0] = successor;
+      this.predecessor = predecessor;
 
-		this.pool = Executors.newFixedThreadPool(20);
+      this.pool = Executors.newFixedThreadPool(20);
 	}
 
 	public Member(int receivePort){
@@ -58,9 +64,9 @@ public class Member {
 		 
 	 }
 
-	 private void stabilize(){
+	 void stabilize(){
 		 //Request predecessor's successor
-       Request Successor m = new RequestSuccessor(myInfo, predecessor); 
+       RequestSuccessor m = new RequestSuccessor(myInfo, predecessor); 
 		 this.pool.execute(new SendingSocket(m));
 		 //Check finger table entries
 		 
@@ -69,7 +75,7 @@ public class Member {
     // Getters and setters
     /* Returns our finger table */
     public MemberInfo[] getFingerTable() {
-        return this.fingerTable(); 
+        return this.fingerTable; 
     }
     
     public ServerSocket getListener() {
@@ -77,8 +83,8 @@ public class Member {
     }
     
     public synchronized void setFingerTable(MemberInfo[] ft) {
-      this.fingerTable = new Neighbor[chordIDLength]; 
-      System.arraycopy(ft, 0, this.fingerTable, chordIDLength); 
+      this.fingerTable = new MemberInfo[myInfo.chordIDLength]; 
+      System.arraycopy(ft, 0, this.fingerTable, 0, myInfo.chordIDLength); 
     }   
     
     
@@ -100,6 +106,8 @@ public class Member {
 			//Parse user commands here
 
 		}while(!command.equals("QUIT"));
+		
+		userInput.close(); 
 
     }
 }

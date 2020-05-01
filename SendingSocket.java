@@ -1,3 +1,7 @@
+import java.net.InetAddress; 
+import java.net.Socket; 
+import java.io.ObjectOutputStream;
+
 /* Connect to a Neighbor, push a message, and disconnect */
 public class SendingSocket implements Runnable {
   private Message message;
@@ -10,7 +14,7 @@ public class SendingSocket implements Runnable {
     try {
     
       InetAddress toIP = message.recipient.IP; 
-      InetAddress toPort = message.recipient.recievePort; 
+      int toPort = message.recipient.receivePort; 
       
       Socket sock = new Socket(toIP, toPort); 
       ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream()); 

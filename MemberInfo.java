@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.InetAddress; 
-import java.net.URL; 
+import java.net.URL;
+import org.apache.commons.codec.digest.DigestUtils;
 
 public class MemberInfo implements Serializable { 
    public InetAddress IP;
@@ -24,7 +25,9 @@ public class MemberInfo implements Serializable {
    
    //Publicly available function to generate Chord ID for any value
 	public static String generateChordID(String value){
-		String id = org.apache.commons.codec.digest.DigestUtils.sha1Hex(value); // for some reason can't find this
+		String id = DigestUtils.sha256Hex(value); 
+      
+		//String id = org.apache.commons.codec.digest.DigestUtils.sha1Hex(value); // for some reason can't find this
 		return id.substring(0, chordIDLength);
 	}
 

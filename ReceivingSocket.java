@@ -1,3 +1,7 @@
+import java.net.ServerSocket;
+import java.io.ObjectInputStream;
+
+
 /* Receive all messages, process them, and handle lookup (file search or member search) logic. */
 public class ReceivingSocket implements Runnable {
   private Member myself;
@@ -11,7 +15,7 @@ public class ReceivingSocket implements Runnable {
   public void run() {
  
     try {
-      serverSocket = myself.getListener(); 
+      ServerSocket serverSocket = myself.getListener(); 
       while(true) {
       
         ObjectInputStream in = new ObjectInputStream(serverSocket.getInputStream());
@@ -19,7 +23,7 @@ public class ReceivingSocket implements Runnable {
         
         if (inObject instanceof Message) {
          System.out.println("I got a message!!"); 
-        // .. put more recieving messages here 
+        // .. put more receiving messages here 
         } else {
          System.err.println("Recieved an object of unknown message type"); 
         }
