@@ -1,4 +1,5 @@
 import java.net.ServerSocket;
+import java.net.Socket; 
 import java.io.ObjectInputStream;
 
 
@@ -15,11 +16,13 @@ public class ReceivingSocket implements Runnable {
   public void run() {
  
     try {
-      ServerSocket serverSocket = myself.getListener(); 
+      
+      Socket sock = myself.getListener().accept(); 
       while(true) {
       
-        ObjectInputStream in = new ObjectInputStream(serverSocket.getInputStream());
+        ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
         Object inObject = in.readObject(); 
+        // are these blocking??? (probably) 
         
         if (inObject instanceof Message) {
          System.out.println("I got a message!!"); 
@@ -28,6 +31,7 @@ public class ReceivingSocket implements Runnable {
          System.err.println("Recieved an object of unknown message type"); 
         }
         
+        // put this in a separate thread
         //Perform periodic checks defined by Chord's join, leave, and stabilization processes
         if((System.currentTimeMillis() - this.lastStabilize) > 60000){
           lastStabilize = System.currentTimeMillis();

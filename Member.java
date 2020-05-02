@@ -105,9 +105,9 @@ public class Member {
 
 			//Parse user commands here
 
-		}while(!command.equals("QUIT"));
+		} while(!command.equals("QUIT"));
 		
 		userInput.close(); 
-
+		
     }
 }
