@@ -6,7 +6,6 @@ import java.io.ObjectInputStream;
 /* Receive all messages, process them, and handle lookup (file search or member search) logic. */
 public class ReceivingSocket implements Runnable {
   private Member myself;
-  private long lastStabilize;
 
   public ReceivingSocket(Member me){
     this.myself = me;
@@ -31,12 +30,6 @@ public class ReceivingSocket implements Runnable {
          System.err.println("Recieved an object of unknown message type"); 
         }
         
-        // put this in a separate thread
-        //Perform periodic checks defined by Chord's join, leave, and stabilization processes
-        if((System.currentTimeMillis() - this.lastStabilize) > 60000){
-          lastStabilize = System.currentTimeMillis();
-          myself.stabilize();
-        }
       }
     }
     catch(Exception e) {

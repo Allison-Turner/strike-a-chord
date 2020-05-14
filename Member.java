@@ -12,7 +12,7 @@ public class Member {
    public ServerSocket listener;
    
 	private MemberInfo predecessor;
-	private MemberInfo[] successors;
+	//private MemberInfo[] successors;
 	private MemberInfo[] fingerTable;
  
 
@@ -22,18 +22,18 @@ public class Member {
 	*/
 
 	public Member(int receivePort, MemberInfo successor, MemberInfo predecessor){
-      this.myInfo = new MemberInfo(receivePort);
+	   this.myInfo = new MemberInfo(receivePort);
       
-      try {
+/*      try {
     	  this.listener = new ServerSocket(receivePort);
       } catch (IOException e) {
     	  System.err.println("Member " + myInfo.chordID + " failed to set up its listener correctly..");
-      }
+      }*/
       
-      this.fingerTable = new MemberInfo[myInfo.chordIDLength];
+	   this.fingerTable = new MemberInfo[myInfo.chordIDLength];
       //Maintaining a list of O(log n) successors maintains fast searches even in the case of failure rates >=0.5
-      this.successors = new MemberInfo[(int) Math.floor(Math.log(Math.pow(2, myInfo.chordIDLength)))];
-      successors[0] = successor;
+      //this.successors = new MemberInfo[(int) Math.floor(Math.log(Math.pow(2, myInfo.chordIDLength)))];
+      //successors[0] = successor;
       this.predecessor = predecessor;
 
       this.pool = Executors.newFixedThreadPool(20);
