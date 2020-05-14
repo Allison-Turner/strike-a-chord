@@ -1,6 +1,9 @@
 
 public class RequestSuccessor extends Message { 
-   public RequestSuccessor(MemberInfo sender, MemberInfo receiver) { 
+	int chordID; 
+	
+   public RequestSuccessor(int chordID, MemberInfo sender, MemberInfo receiver) { 
       super(sender, receiver); 
+      this.chordID = chordID; 
    }
 }
