@@ -46,31 +46,52 @@ public class Member {
 	public Member(int receivePort, MemberInfo successor){
 		this(receivePort, successor, null);
 	}
-   // can only have one of these
-   /*
-	public Member(int receivePort, MemberInfo predecessor){
-		Member(receivePort, null, predecessor);
-	}*/ 
    
 	/*
 	Add any functions that will create a SendSocket here, whether it's the ReceivingSocket class or the main workflow that will call them
 	The ReceivingSocket property Member myself exists so that ReceivingSocket can call these functions
 	 */
-	 private void join(){
-		 //notify new predecessor that I'm your successor now
-		 //Copy successor's finger table
-		 
-		 System.out.println("Unimplemented");
+	
+	
+	 
+	 int findSuccessor(int chordID, MemberInfo requester) {
+		
+		 return 0;
 		 
 	 }
+	 
+	 void create() {
+	 
+	 }
+	 
+	 void join() {
+	 }
+	 
 
 	 void stabilize(){
 		 //Request predecessor's successor
        RequestSuccessor m = new RequestSuccessor(myInfo, predecessor); 
-		 this.pool.execute(new SendingSocket(m));
+	   this.pool.execute(new SendingSocket(m));
 		 //Check finger table entries
 		 
 	 }
+	 void notify(int chordID) { 
+		 
+	 }
+	 
+	 int closestPreceeding(int chordID) {
+	 
+		 return 0; 
+	 }
+	 
+	 void fixFingers() {
+		 
+	 }
+	 
+	 
+	 void checkPredecessor() {
+	 }
+	 
    
     // Getters and setters
     /* Returns our finger table */
@@ -85,10 +106,20 @@ public class Member {
     public synchronized void setFingerTable(MemberInfo[] ft) {
       this.fingerTable = new MemberInfo[myInfo.chordIDLength]; 
       System.arraycopy(ft, 0, this.fingerTable, 0, myInfo.chordIDLength); 
-    }   
+    }
     
     
+    public void help() {
+    	System.out.println("Welcome to Chord.");
+    	System.out.println("This member has id " + this.myInfo.chordID + " and max id length in bits (\"m\")" + this.myInfo.chordIDLength);
+    	
+    	System.out.println("Enter \"add <filename>\" to add a file to the chord ring");
+    	System.out.println("Enter \"search <filename>\" to retrieve a file in the chord ring");
+    	System.out.println("Enter \"help\" to view this menu again."); 
+    }
    
+    
+    // create a separate thread for 
 	/* Main workflow */
 	public static void main(String[] args){
 		Member member = new Member(4000);
@@ -98,14 +129,39 @@ public class Member {
 		member.pool.execute(new ReceivingSocket(member));
 
 		Scanner userInput = new Scanner(System.in);
-		String command;
+		String[] command;
 
-		do{
-			command = userInput.nextLine().trim();
-
-			//Parse user commands here
-
-		} while(!command.equals("QUIT"));
+		
+		// UI -- 
+		// add key filename 
+		// add key 
+		while(true) {
+			System.out.println("Please enter a command")
+			command = userInput.nextLine().trim().split(" "); 
+			if (command[0].equals("help")) {
+				member.help(); 
+				continue;
+			}
+			if (command.length != 2) {
+				System.out.println("Please enter a valid command. Enter \"help\" to see commands");
+				continue;
+			} 
+			
+			if (command[0].equals("add")) {
+				String filename = command[1]; 
+				 int key = member.myInfo.generateChordID(filename);
+				 
+				 continue;
+			}
+			
+			if (command[0].equals("search")) {
+				String filename = command[1];
+				int key = member.myInfo.generateChordID(filename); 
+				
+				continue; 
+			}
+			
+		}
 		
 		userInput.close(); 
 		

@@ -45,6 +45,7 @@ public class ReceivingSocket implements Runnable {
     }
   }
 
+  /*
   //Process new successor notification (includes moving files to new successor)
   private void processSuccessorUpdate(RoutingInfoRequest message){
 
@@ -68,6 +69,6 @@ public class ReceivingSocket implements Runnable {
   }
   
   //Process finger table update request
-  
+  */
  
 }

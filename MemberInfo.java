@@ -5,30 +5,46 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.InetAddress; 
 import java.net.URL;
-import org.apache.commons.codec.digest.DigestUtils;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException; 
+import java.nio.ByteBuffer;
 
 public class MemberInfo implements Serializable { 
    public InetAddress IP;
 	public int receivePort;
 	public int sendPort; 
 
-	public String chordID;
+	public int chordID;
 	public static final int chordIDLength = 3; // m in chord paper
+	
+	MessageDigest md; 
    
    public MemberInfo(int receivePort) {
       this.receivePort = receivePort; 
       this.sendPort = 4000; 
       getLocalIP();
-		this.chordID = generateChordID(this.IP.toString());
+      this.chordID = generateChordID(this.IP.toString());
+      
+      try { 
+    	  md = MessageDigest.getInstance("SHA-256");
+      } catch (NoSuchAlgorithmException e) {
+    	   System.out.println("Couldn't find the algorithm \"SHA-256\""); 
+      }
 
    }
    
    //Publicly available function to generate Chord ID for any value
-	public static String generateChordID(String value){
-		String id = DigestUtils.sha256Hex(value); 
-      
-		//String id = org.apache.commons.codec.digest.DigestUtils.sha1Hex(value); // for some reason can't find this
-		return id.substring(0, chordIDLength);
+	public int generateChordID(String value){
+		
+		this.md.update(value.getBytes());
+		byte[] valueDigest = md.digest();
+		md.reset(); 
+		ByteBuffer wrapped = ByteBuffer.wrap(valueDigest); 
+		int chordID = wrapped.getInt(); 
+		
+		// take modulo 2^chordIDLength
+		chordID = chordID % (int) Math.pow(2,  this.chordIDLength); 
+		return chordID; 
 	}
 
    
