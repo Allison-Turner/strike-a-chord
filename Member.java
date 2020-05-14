@@ -12,8 +12,10 @@ public class Member {
    public ServerSocket listener;
    
 	private MemberInfo predecessor;
-	private MemberInfo[] successors;
+	private MemberInfo[] successors; 
 	private MemberInfo[] fingerTable;
+	
+	int next; // for fix fingers
  
 
 	/*
@@ -53,22 +55,41 @@ public class Member {
 	 */
 	
 	 
-	 int findSuccessor(int chordID, MemberInfo requester) {
+	/* Returns a MemberInfo with the successor of the chordID if we can find it in our fingerTable
+	 * Else, send a message to the closest chordID in the fingerTable and return null
+	 */
+	 MemberInfo findSuccessor(int chordID, MemberInfo requester) {
 		
-		 return 0;
+		 if((this.myInfo.chordID > chordID) && (chordID <= this.fingerTable[0].chordID)) { 
+			 return this.fingerTable[1]; 
+		 } else { 
+			 MemberInfo nextClosest = closestPreceeding(chordID);
+			 
+			 RequestSuccessor message = new RequestSuccessor(chordID, requester, nextClosest);
+			 SendingSocket s = new SendingSocket(message); 
+			 
+			 // RETURNING NULL BECAUSE NO OPTION TYPE #ANGERY
+			 return null; 
+			 
+		 }
 		 
 	 }
 	 
-	 void create() {
-	 
+	 MemberInfo closestPreceeding(int chordID) {
+		 
+		 for (int i = this.myInfo.chordIDLength; i >= 1; i--) {
+			 int tableID = (this.fingerTable[i].chordID); 
+			 if (this.myInfo.chordID > tableID && this.myInfo.chordID <= chordID) { 
+				 return fingerTable[i];
+			 } 
+		 }
+		return this.myInfo;
 	 }
 	 
-	 void join() {
-	 }
 	 
-
 	 void stabilize(){
 		 //Request predecessor's successor
+		 // add chordID
        RequestSuccessor m = new RequestSuccessor(myInfo, predecessor); 
 	   this.pool.execute(new SendingSocket(m));
 		 //Check finger table entries
@@ -78,12 +99,8 @@ public class Member {
 		 
 	 }
 	 
-	 int closestPreceeding(int chordID) {
-	 
-		 return 0; 
-	 }
-	 
 	 void fixFingers() {
+		 
 		 
 	 }
 	 
@@ -118,7 +135,6 @@ public class Member {
     }
    
     
-    // create a separate thread for doing 
     
     
 	/* Main workflow */

@@ -24,8 +24,18 @@ public class ReceivingSocket implements Runnable {
         Object inObject = in.readObject(); 
         // are these blocking??? (probably) 
         
-        if (inObject instanceof Message) {
-         System.out.println("I got a message!!"); 
+        if (inObject instanceof RequestSuccessor) {
+        	RequestSuccessor rs = (RequestSuccessor) inObject;
+        	
+        	MemberInfo successor = myself.findSuccessor(rs.chordID, rs.sender); 
+        	if (successor == null) {
+        		 // do nothing
+        	} else { // send it back to the requester
+        		
+        		// send a requestSuccessorResponse to rs.sender
+        		
+        		
+        	}
         // .. put more receiving messages here 
         } else {
          System.err.println("Recieved an object of unknown message type"); 
