@@ -52,7 +52,6 @@ public class Member {
 	The ReceivingSocket property Member myself exists so that ReceivingSocket can call these functions
 	 */
 	
-	
 	 
 	 int findSuccessor(int chordID, MemberInfo requester) {
 		
@@ -119,7 +118,9 @@ public class Member {
     }
    
     
-    // create a separate thread for 
+    // create a separate thread for doing 
+    
+    
 	/* Main workflow */
 	public static void main(String[] args){
 		Member member = new Member(4000);
@@ -136,12 +137,21 @@ public class Member {
 		// add key filename 
 		// add key 
 		while(true) {
-			System.out.println("Please enter a command")
+			System.out.println("Please enter a command");
 			command = userInput.nextLine().trim().split(" "); 
+			
+			if (command.length == 0) {
+				System.out.println("Please enter a valid command.  Enter \"help\" to see commands"); 
+			}
 			if (command[0].equals("help")) {
 				member.help(); 
 				continue;
+			} 
+			
+			if (command[0].equals("quit")) {
+				break; 
 			}
+			
 			if (command.length != 2) {
 				System.out.println("Please enter a valid command. Enter \"help\" to see commands");
 				continue;
@@ -159,8 +169,7 @@ public class Member {
 				int key = member.myInfo.generateChordID(filename); 
 				
 				continue; 
-			}
-			
+			} 
 		}
 		
 		userInput.close(); 
