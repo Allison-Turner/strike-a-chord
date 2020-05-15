@@ -63,6 +63,9 @@ public class MemberInfo implements Serializable {
 		
 	// take modulo 2^chordIDLength
 	chordID = chordID % (int) Math.pow(2,  this.chordIDLength); 
+	if (chordID < 0){
+	    chordID += (int) Math.pow(2, this.chordIDLength);
+	}
 	return chordID; 
    }
 
