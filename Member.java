@@ -123,6 +123,7 @@ public class Member {
     }
 
    public void addFingerTableEntry(MemberInfo newEntry){
+	System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
 	int slot = 0;
 	for(int i = 0; i < myInfo.chordIDLength; i++){
 	   if(newEntry.chordID < ((myInfo.chordID + Math.pow(2, i)) % Math.pow(2, myInfo.chordIDLength)) ){
@@ -131,13 +132,18 @@ public class Member {
 	}
 	if((this.fingerTable[slot] == null) || (this.fingerTable[slot].chordID < newEntry.chordID) ){
 	   this.fingerTable[slot] = newEntry;
+	   System.out.println("Added " + newEntry.chordID + "to slot " + slot);
 	}
    }
 
    public void printFingerTable(){
 	System.out.println("My Chord ID: " + this.myInfo.chordID);
+	System.out.println("-----Finger Table-----");
 	for(int i = 0; i < this.fingerTable.length; i++){
-	   System.out.println("Entry " + i + " Chord ID: " + this.fingerTable[i].chordID + " IP: " + this.fingerTable[i].IP.toString());
+	   System.out.println("Entry :" + i);
+	   System.out.println(this.fingerTable[i]);
+	   System.out.println("Chord ID: " + this.fingerTable[i].chordID);
+	   System.out.println("IP: " + this.fingerTable[i].IP.toString());
 	}
    }
     
@@ -162,6 +168,16 @@ public class Member {
 	   MemberInfo newFinger = new MemberInfo(MemberInfo.parseIP(args[i]), Integer.parseInt(args[i+1]));
 	   member.addFingerTableEntry(newFinger);
 	}
+
+	//No null finger table entries. 
+	//If no members fit into the ID space (id + 2^i) mod 2^m, 
+	//then the entry for (id + 2^(i-1)) mod 2^m will be duplicated
+	for(int i = 1; i < member.fingerTable.length; i++){
+	   if(member.fingerTable[i] == null){
+		member.fingerTable[i] = member.fingerTable[i - 1];
+		System.out.println("Copying previous finger table entry into slot " + i);
+	   }
+	} 
 
 	member.printFingerTable();
 
