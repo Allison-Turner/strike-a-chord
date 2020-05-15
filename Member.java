@@ -163,6 +163,7 @@ public class Member {
 	for(int i = 1; i < member.fingerTable.length; i++){
 	   if(member.fingerTable[i] == null){
 		member.fingerTable[i] = member.fingerTable[i - 1];
+		System.out.println("Copying finger table entry " + (i - 1) + " into slot " + i);
 	   }
 	{ 
 
