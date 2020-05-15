@@ -120,7 +120,7 @@ public class Member {
 	}
 	if((this.fingerTable[slot] == null) || (this.fingerTable[slot].chordID < newEntry.chordID) ){
 	   this.fingerTable[slot] = newEntry;
-	   System.out.println("Added " + newEntry.chordID + "to slot " + i);
+	   System.out.println("Added " + newEntry.chordID + "to slot " + slot);
 	}
    }
 
