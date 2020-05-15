@@ -157,6 +157,15 @@ public class Member {
 	   member.addFingerTableEntry(newFinger);
 	}
 
+	//No null finger table entries. 
+	//If no members fit into the ID space (id + 2^i) mod 2^m, 
+	//then the entry for (id + 2^(i-1)) mod 2^m will be duplicated
+	for(int i = 1; i < member.fingerTable.length; i++){
+	   if(member.fingerTable[i] == null){
+		member.fingerTable[i] = member.fingerTable[i - 1];
+	   }
+	{ 
+
 	member.printFingerTable();
 
 	//We give the ReceivingSocket and Stabilizer handles on the invoking Member for when they 
