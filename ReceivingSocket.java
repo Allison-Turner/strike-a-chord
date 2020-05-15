@@ -32,7 +32,7 @@ public class ReceivingSocket implements Runnable {
 		   else { 
 			// send a requestSuccessorResponse to rs.sender with the successor
 			RequestSuccessorResponse message = new RequestSuccessorResponse(rs.chordID, successor, this.myself.myInfo, rs.sender); 
-			this.myself.send(message); 
+			this.myself.send(message);
 		   }
 		}
         	// .. put more receiving messages here  

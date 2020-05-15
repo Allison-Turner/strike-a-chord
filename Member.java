@@ -51,13 +51,14 @@ public class Member {
    * Else, send a message to the closest chordID in the fingerTable and return null
    */
    public MemberInfo findSuccessor(int chordID, MemberInfo requester) {
+	   // if its us
 	if((this.myInfo.chordID > chordID) && (chordID <= this.fingerTable[0].chordID)) { 
-	   return this.fingerTable[1]; 
+	   return this.myInfo;
 	} 
 	else { 
-	   MemberInfo nextClosest = closestPreceeding(chordID);
+	  MemberInfo nextClosest = closestPreceeding(chordID);
 			 
-	   RequestSuccessor message = new RequestSuccessor(chordID, requester, nextClosest);
+	  RequestSuccessor message = new RequestSuccessor(chordID, requester, nextClosest);
 	  this.send(message);
 			 
 	   // RETURNING NULL BECAUSE NO OPTION TYPE #ANGERY
