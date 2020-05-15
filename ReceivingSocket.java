@@ -27,14 +27,21 @@ public class ReceivingSocket implements Runnable {
         	
 		   MemberInfo successor = myself.findSuccessor(rs.chordID, rs.sender); 
 		   if (successor == null) {
-			// do nothing
+			// do nothing -- findSuccessor already forwarded the message
 		   }
 		   else { 
-			// send it back to the requester
-			// send a requestSuccessorResponse to rs.sender
+			// send a requestSuccessorResponse to rs.sender with the successor
+			RequestSuccessorResponse message = new RequestSuccessorResponse(rs.chordID, successor, this.myself.myInfo, rs.sender); 
+			this.myself.send(message); 
 		   }
 		}
         	// .. put more receiving messages here  
+		else if (inObject instanceof RequestSuccessorResponse){
+			RequestSuccessorResponse rsr = (RequestSuccessorResponse) inObject;
+			System.out.println("The successor of " + rsr.chordID + " is " + rsr.successor.chordID);
+		} else if (inObject instanceof RequestFile) {
+			
+		}
 		else {
 		   System.err.println("Recieved an object of unknown message type"); 
 		}

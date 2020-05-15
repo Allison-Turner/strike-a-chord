@@ -17,7 +17,6 @@ public class Member {
 
    ArrayList<MyFile> files;
    int next; // for fix fingers
- 
 
    /*
    Constructors
@@ -59,7 +58,7 @@ public class Member {
 	   MemberInfo nextClosest = closestPreceeding(chordID);
 			 
 	   RequestSuccessor message = new RequestSuccessor(chordID, requester, nextClosest);
-	   this.pool.execute(new SendingSocket(message));
+	  this.send(message);
 			 
 	   // RETURNING NULL BECAUSE NO OPTION TYPE #ANGERY
 	   return null; 
@@ -75,6 +74,11 @@ public class Member {
 	   } 
 	}
 	return this.myInfo;
+   }
+   
+   public MyFile fileSearch() {
+	   return new MyFile(2, "hi"); 
+	   
    }
 	 
 	 
@@ -99,6 +103,13 @@ public class Member {
 
    }
 	 
+   
+   //helpers
+   
+   // enables us to send messages from recieving socket
+   public void send(Message m) {
+	   this.pool.execute(new SendingSocket(m));
+   }
 
     /* Returns our finger table */
     public MemberInfo[] getFingerTable() {
@@ -163,8 +174,9 @@ public class Member {
 
 		
 	// UI -- 
-	// add key filename 
-	// add key 
+	// Enter "add <filename>" to add a file to the chord ring
+	// Enter "search <filename>" to retrieve a file in the chord ring
+	// Enter "help" to view this menu again.
 	while(true) {
 	   System.out.println("Please enter a command");
 	   command = userInput.nextLine().trim().split(" "); 
