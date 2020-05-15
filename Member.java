@@ -127,6 +127,7 @@ public class Member {
 	System.out.println("-----Finger Table-----");
 	for(int i = 0; i < this.fingerTable.length; i++){
 	   System.out.println("Entry :" + i);
+	   System.out.println(this.fingerTable[i]);
 	   System.out.println("Chord ID: " + this.fingerTable[i].chordID);
 	   System.out.println("IP: " + this.fingerTable[i].IP.toString());
 	}
