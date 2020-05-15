@@ -66,7 +66,7 @@ public class Member {
 			 
 	}
    }
-	 
+   
    public MemberInfo closestPreceeding(int chordID) {
 	for (int i = this.myInfo.chordIDLength; i >= 1; i--) {
 	   int tableID = (this.fingerTable[i].chordID); 
@@ -81,9 +81,14 @@ public class Member {
 	   return new MyFile(2, "hi"); 
 	   
    }
+   
+   public void addFile(MyFile files) {
+   
+   }
 	 
-	 
+   // Unimplmemented error -- check that things have joined correctly but we're not implementing joining
    public void stabilize(){
+	   
 	System.out.println("Stabilizing.");
 	//Request predecessor's successor
 	// add chordID
@@ -92,14 +97,17 @@ public class Member {
 	//Check finger table entries
    }
 
+   // Also part of join -- not implementing
    public void notify(int chordID) { 
-		 
+	
    }
-	 
-   public void fixFingers() {
 
+   // Also part of join -- could implement but not a priority
+   public void fixFingers() {
+   
    }
 	 
+   // we will implement this
    public void checkPredecessor() {
 
    }
