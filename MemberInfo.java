@@ -17,20 +17,40 @@ public class MemberInfo implements Serializable {
    public int chordID;
    public static final int chordIDLength = 3; // m in chord paper
 	
-   private MessageDigest md; 
-   
-   public MemberInfo(int receivePort) {
-      this.receivePort = receivePort; 
-      this.sendPort = 4000; 
-      getLocalIP();
-      this.chordID = generateChordID(this.IP.toString());
-      
-      try { 
-    	  md = MessageDigest.getInstance("SHA-256");
-      } catch (NoSuchAlgorithmException e) {
-    	   System.out.println("Couldn't find the algorithm \"SHA-256\""); 
-      }
+   private MessageDigest md;
 
+   //Info about another machine
+   public MemberInfo(InetAddress IP, int receivePort){
+	this.receivePort = receivePort; 
+	this.sendPort = 4000; 
+	this.IP = IP;
+      
+	try { 
+    	  md = MessageDigest.getInstance("SHA-256");
+	} 
+	catch (NoSuchAlgorithmException e) {
+	   System.out.println("Couldn't find the algorithm \"SHA-256\""); 
+	}
+   	this.chordID = generateChordID(this.IP.toString());
+   }
+
+   //Info about myself
+   public MemberInfo(int receivePort){
+	this.receivePort = receivePort; 
+	this.sendPort = 4000; 
+	getLocalIP();
+      
+	try { 
+    	  md = MessageDigest.getInstance("SHA-256");
+	} 
+	catch (NoSuchAlgorithmException e) {
+	   System.out.println("Couldn't find the algorithm \"SHA-256\""); 
+	}
+   	this.chordID = generateChordID(this.IP.toString());
+   }
+
+   public boolean equals(MemberInfo other){
+	return this.IP.toString().equals(other.IP.toString());
    }
    
    //Publicly available function to generate Chord ID for any value
@@ -44,6 +64,16 @@ public class MemberInfo implements Serializable {
 	// take modulo 2^chordIDLength
 	chordID = chordID % (int) Math.pow(2,  this.chordIDLength); 
 	return chordID; 
+   }
+
+   public static InetAddress parseIP(String address){
+	try{
+	   return InetAddress.getByName(address);
+	}
+	catch(Exception e){
+	   System.out.println("Error parsing IP from string: " + address);
+	   return null;
+	}
    }
 
    //Connect to a public IP lookup service and read what my public IP is

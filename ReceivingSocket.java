@@ -9,44 +9,43 @@ public class ReceivingSocket implements Runnable {
 
   public ReceivingSocket(Member me){
     this.myself = me;
-    this.lastStabilize = 0;
   }
 
-  public void run() {
- 
-    try {
+   public void run() {
+	try {
+	   ServerSocket listener = new ServerSocket(myself.myInfo.receivePort);
       
-      Socket sock = myself.getListener().accept(); 
-      while(true) {
-      
-        ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
-        Object inObject = in.readObject(); 
-        // are these blocking??? (probably) 
+	   while(true) {
+		Socket newConnection = listener.accept();
+
+		// are these blocking??? (probably)
+		ObjectInputStream in = new ObjectInputStream(newConnection.getInputStream());
+		Object inObject = in.readObject();  
         
-        if (inObject instanceof RequestSuccessor) {
-        	RequestSuccessor rs = (RequestSuccessor) inObject;
+		if (inObject instanceof RequestSuccessor) {
+		   RequestSuccessor rs = (RequestSuccessor) inObject;
         	
-        	MemberInfo successor = myself.findSuccessor(rs.chordID, rs.sender); 
-        	if (successor == null) {
-        		 // do nothing
-        	} else { // send it back to the requester
-        		
-        		// send a requestSuccessorResponse to rs.sender
-        		
-        		
-        	}
-        // .. put more receiving messages here 
-        } else {
-         System.err.println("Recieved an object of unknown message type"); 
-        }
+		   MemberInfo successor = myself.findSuccessor(rs.chordID, rs.sender); 
+		   if (successor == null) {
+			// do nothing
+		   }
+		   else { 
+			// send it back to the requester
+			// send a requestSuccessorResponse to rs.sender
+		   }
+		}
+        	// .. put more receiving messages here  
+		else {
+		   System.err.println("Recieved an object of unknown message type"); 
+		}
         
-      }
-    }
-    catch(Exception e) {
-      System.err.println("Receive socket error");
-      e.printStackTrace();
-    }
-  }
+	   }
+	}
+	catch(Exception e) {
+	   System.err.println("Receive socket error");
+	   e.printStackTrace();
+	}
+   }
 
   /*
   //Process new successor notification (includes moving files to new successor)
