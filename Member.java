@@ -44,7 +44,7 @@ public class Member {
    
    /*
    Add any functions that will create a SendSocket here, whether it's the ReceivingSocket class or the main workflow that will call them
-   The ReceivingSocket property Member myself exists so that ReceivingSocket can call these functions
+   The ReceivingSocket and Stabilizer properties Member myself exist so they can call these functions
    */
 	
 	 
@@ -56,7 +56,7 @@ public class Member {
 	   return this.fingerTable[1]; 
 	} 
 	else { 
-	   MemberInfo nextClosest = closestPreceeding(chordID);
+	   MemberInfo nextClosest = closestPreceding(chordID);
 			 
 	   RequestSuccessor message = new RequestSuccessor(chordID, requester, nextClosest);
 	   this.pool.execute(new SendingSocket(message));
@@ -67,7 +67,7 @@ public class Member {
 	}
    }
 	 
-   public MemberInfo closestPreceeding(int chordID) {
+   public MemberInfo closestPreceding(int chordID) {
 	for (int i = this.myInfo.chordIDLength; i >= 1; i--) {
 	   int tableID = (this.fingerTable[i].chordID); 
 	   if (this.myInfo.chordID > tableID && this.myInfo.chordID <= chordID) { 
@@ -111,7 +111,7 @@ public class Member {
     }
 
    public void addFingerTableEntry(MemberInfo newEntry){
-	System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
+	//System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
 	int slot = 0;
 	for(int i = 0; i < myInfo.chordIDLength; i++){
 	   if(newEntry.chordID < ((myInfo.chordID + Math.pow(2, i)) % Math.pow(2, myInfo.chordIDLength)) ){
@@ -120,7 +120,7 @@ public class Member {
 	}
 	if((this.fingerTable[slot] == null) || (this.fingerTable[slot].chordID < newEntry.chordID) ){
 	   this.fingerTable[slot] = newEntry;
-	   System.out.println("Added " + newEntry.chordID + "to slot " + slot);
+	   //System.out.println("Added " + newEntry.chordID + "to slot " + slot);
 	}
    }
 
@@ -163,11 +163,11 @@ public class Member {
 	for(int i = 1; i < member.fingerTable.length; i++){
 	   if(member.fingerTable[i] == null){
 		member.fingerTable[i] = member.fingerTable[i - 1];
-		System.out.println("Copying previous finger table entry into slot " + i);
+		//System.out.println("Copying previous finger table entry into slot " + i);
 	   }
 	} 
 
-	member.printFingerTable();
+	//member.printFingerTable();
 
 	//We give the ReceivingSocket and Stabilizer handles on the invoking Member for when they 
 	//need to invoke a process that alters the Member's connectivity info or open a SendingSocket
