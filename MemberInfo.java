@@ -26,7 +26,7 @@ public class MemberInfo implements Serializable {
 	this.IP = IP;
       
 	try { 
-    	  md = MessageDigest.getInstance("SHA-256");
+       md = MessageDigest.getInstance("SHA-256");
 	} 
 	catch (NoSuchAlgorithmException e) {
 	   System.out.println("Couldn't find the algorithm \"SHA-256\""); 

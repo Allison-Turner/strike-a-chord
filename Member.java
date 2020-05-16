@@ -17,7 +17,6 @@ public class Member {
 
    ArrayList<MyFile> files;
    int next; // for fix fingers
- 
 
    /*
    Constructors
@@ -52,14 +51,15 @@ public class Member {
    * Else, send a message to the closest chordID in the fingerTable and return null
    */
    public MemberInfo findSuccessor(int chordID, MemberInfo requester) {
+	   // if its us
 	if((this.myInfo.chordID > chordID) && (chordID <= this.fingerTable[0].chordID)) { 
-	   return this.fingerTable[1]; 
+	   return this.myInfo;
 	} 
 	else { 
 	   MemberInfo nextClosest = closestPreceding(chordID);
 			 
-	   RequestSuccessor message = new RequestSuccessor(chordID, requester, nextClosest);
-	   this.pool.execute(new SendingSocket(message));
+	  RequestSuccessor message = new RequestSuccessor(chordID, requester, nextClosest);
+	  this.send(message);
 			 
 	   // RETURNING NULL BECAUSE NO OPTION TYPE #ANGERY
 	   return null; 
@@ -76,9 +76,38 @@ public class Member {
 	}
 	return this.myInfo;
    }
+   
+   public String fileSearch(int key, MemberInfo requester) throws FileNotFoundException {
+	   if((this.myInfo.chordID > key) && (key <= this.fingerTable[0].chordID)) { 
+		   for (MyFile file: this.files) {
+			   if(file.chordID == key) {
+				   return file.fileName;
+			   }
+		   }
+		   // we didn't find the file
+		   
+		   throw new FileNotFoundException(); 
+		} 
+		else { 
+		  MemberInfo nextClosest = closestPreceeding(key);
+				 
+		  RequestFile message = new RequestFile(key, requester, nextClosest);
+		  this.send(message);
+				 
+		   // RETURNING NULL BECAUSE NO OPTION TYPE #ANGERY
+		   return null; 
+				 
+		}
+	   
+   }
+   
+   public void addFile(MyFile files) {
+   
+   }
 	 
-	 
+   // Unimplmemented error -- check that things have joined correctly but we're not implementing joining
    public void stabilize(){
+	   
 	System.out.println("Stabilizing.");
 	//Request predecessor's successor
 	// add chordID
@@ -87,18 +116,28 @@ public class Member {
 	//Check finger table entries
    }
 
+   // Also part of join -- not implementing
    public void notify(int chordID) { 
-		 
+	
    }
-	 
-   public void fixFingers() {
 
+   // Also part of join -- could implement but not a priority
+   public void fixFingers() {
+   
    }
 	 
+   // we will implement this
    public void checkPredecessor() {
 
    }
 	 
+   
+   //helpers
+   
+   // enables us to send messages from recieving socket
+   public void send(Message m) {
+	   this.pool.execute(new SendingSocket(m));
+   }
 
     /* Returns our finger table */
     public MemberInfo[] getFingerTable() {
@@ -142,6 +181,7 @@ public class Member {
     	
     	System.out.println("Enter \"add <filename>\" to add a file to the chord ring");
     	System.out.println("Enter \"search <filename>\" to retrieve a file in the chord ring");
+    	System.out.println("Enter \"successor <key>\" to find the node following that key");
     	System.out.println("Enter \"help\" to view this menu again."); 
     }
    
@@ -179,8 +219,10 @@ public class Member {
 
 		
 	// UI -- 
-	// add key filename 
-	// add key 
+	// Enter "add <filename>" to add a file to the chord ring
+	// Enter "search <filename>" to retrieve a file in the chord ring
+	// Enter "successor <key>" to find the node following that key
+	// Enter "help" to view this menu again.
 	while(true) {
 	   System.out.println("Please enter a command");
 	   command = userInput.nextLine().trim().split(" "); 
@@ -207,12 +249,26 @@ public class Member {
 				 
 		continue;
 	   }
+	   
 	   if (command[0].equals("search")) {
 		String filename = command[1];
 		int key = member.myInfo.generateChordID(filename); 
+		try {
+			member.fileSearch(key, member.myInfo);
+		} catch (FileNotFoundException e){
+			System.out.println("Couldn't find the file " + filename + ". It should have been on this machine, but it isn't. Oops!");
+		}
 				
 		continue; 
 	   } 
+	   
+	   if (command[0].equals("successor")) {
+			int key = Integer.parseInt(command[1]);
+			member.findSuccessor(key, member.myInfo);
+			
+			continue; 
+			
+		}
 	}
 	userInput.close(); 
 		

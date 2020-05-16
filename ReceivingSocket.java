@@ -1,6 +1,7 @@
 import java.net.ServerSocket;
 import java.net.Socket; 
 import java.io.ObjectInputStream;
+import java.io.FileNotFoundException; 
 
 
 /* Receive all messages, process them, and handle lookup (file search or member search) logic. */
@@ -27,14 +28,49 @@ public class ReceivingSocket implements Runnable {
         	
 		   MemberInfo successor = myself.findSuccessor(rs.chordID, rs.sender); 
 		   if (successor == null) {
-			// do nothing
+			// do nothing -- findSuccessor already forwarded the message
 		   }
 		   else { 
-			// send it back to the requester
-			// send a requestSuccessorResponse to rs.sender
+			// send a requestSuccessorResponse to rs.sender with the successor
+			RequestSuccessorResponse message = new RequestSuccessorResponse(rs.chordID, successor, this.myself.myInfo, rs.sender); 
+			this.myself.send(message);
 		   }
 		}
         	// .. put more receiving messages here  
+		else if (inObject instanceof RequestSuccessorResponse){
+			RequestSuccessorResponse rsr = (RequestSuccessorResponse) inObject;
+			System.out.println("The successor of " + rsr.chordID + " is " + rsr.successor.chordID);
+		} else if (inObject instanceof RequestFile) {
+			RequestFile rf = (RequestFile) inObject; 
+			
+			
+			try { 
+				String file = myself.fileSearch(rf.key, rf.sender); 
+				if(file == null) {
+					// message has been forwarded via finger table; do nothing
+				} else {
+					// send the file back
+					RequestFileResponse message = new RequestFileResponse(file, this.myself.myInfo, rf.sender); 
+					this.myself.send(message);
+				}
+				
+			} catch (FileNotFoundException e) { // no file is stored at the key -- 
+				// SEND A FILE NOT FOUND MESSAGE
+				
+			}
+		} else if (inObject instanceof RequestFileResponse) {
+			
+			if (inObject instanceof FileNotFoundResponse) { // inside bc FileNotFoundResponse a subclass of RequestFileResponse
+				
+				FileNotFoundResponse fnfr = (FileNotFoundResponse) inObject;
+				System.out.println("File " + fnfr.filename + " could not be found. It should have been located at node " + 
+				fnfr.sender.chordID + " , but it wasn't there. You can try again with a new file name, or add the file to the system. ");
+			
+			} else {
+				RequestFileResponse rfr = (RequestFileResponse) inObject;
+				System.out.println("File " + rfr.filename + " was found at " + rfr.sender.chordID + "!");
+			}
+		}
 		else {
 		   System.err.println("Recieved an object of unknown message type"); 
 		}
