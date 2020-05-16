@@ -77,8 +77,27 @@ public class Member {
 	return this.myInfo;
    }
    
-   public MyFile fileSearch() {
-	   return new MyFile(2, "hi"); 
+   public String fileSearch(int key, MemberInfo requester) throws FileNotFoundException {
+	   if((this.myInfo.chordID > key) && (key <= this.fingerTable[0].chordID)) { 
+		   for (MyFile file: this.files) {
+			   if(file.chordID == key) {
+				   return file.fileName;
+			   }
+		   }
+		   // we didn't find the file
+		   
+		   throw new FileNotFoundException(); 
+		} 
+		else { 
+		  MemberInfo nextClosest = closestPreceeding(key);
+				 
+		  RequestFile message = new RequestFile(key, requester, nextClosest);
+		  this.send(message);
+				 
+		   // RETURNING NULL BECAUSE NO OPTION TYPE #ANGERY
+		   return null; 
+				 
+		}
 	   
    }
    

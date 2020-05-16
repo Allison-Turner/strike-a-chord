@@ -1,10 +1,10 @@
 
 
 public class RequestFile extends Message { 
-   String filename; 
+   int key;
    
-   public RequestFile(String filename, MemberInfo sender, MemberInfo recipient) { 
+   public RequestFile(int key, MemberInfo sender, MemberInfo recipient) { 
       super(sender, recipient); 
-      this.filename = filename; 
+      this.key = key;  
    }
 }
