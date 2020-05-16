@@ -89,7 +89,7 @@ public class Member {
 		   throw new FileNotFoundException(); 
 		} 
 		else { 
-		  MemberInfo nextClosest = closestPreceeding(key);
+		  MemberInfo nextClosest = closestPreceding(key);
 				 
 		  RequestFile message = new RequestFile(key, requester, nextClosest);
 		  this.send(message);
