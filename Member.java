@@ -181,6 +181,7 @@ public class Member {
     	
     	System.out.println("Enter \"add <filename>\" to add a file to the chord ring");
     	System.out.println("Enter \"search <filename>\" to retrieve a file in the chord ring");
+    	System.out.println("Enter \"successor <key>\" to find the node following that key");
     	System.out.println("Enter \"help\" to view this menu again."); 
     }
    
@@ -220,6 +221,7 @@ public class Member {
 	// UI -- 
 	// Enter "add <filename>" to add a file to the chord ring
 	// Enter "search <filename>" to retrieve a file in the chord ring
+	// Enter "successor <key>" to find the node following that key
 	// Enter "help" to view this menu again.
 	while(true) {
 	   System.out.println("Please enter a command");
@@ -247,12 +249,26 @@ public class Member {
 				 
 		continue;
 	   }
+	   
 	   if (command[0].equals("search")) {
 		String filename = command[1];
 		int key = member.myInfo.generateChordID(filename); 
+		try {
+			member.fileSearch(key, member.myInfo);
+		} catch (FileNotFoundException e){
+			System.out.println("Couldn't find the file " + filename + ". It should have been on this machine, but it isn't. Oops!");
+		}
 				
 		continue; 
 	   } 
+	   
+	   if (command[0].equals("successor")) {
+			int key = Integer.parseInt(command[1]);
+			member.findSuccessor(key, member.myInfo);
+			
+			continue; 
+			
+		}
 	}
 	userInput.close(); 
 		
