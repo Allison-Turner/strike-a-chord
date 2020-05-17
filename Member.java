@@ -119,7 +119,7 @@ public class Member {
 		   //Store the index of the last nonempty finger table entry to use as the farthest reachable Chord ID just in case
 		   potentialStorer = i;
 
-		   if((i > 0) && (this.fingerTable[i].chordID < this.fingerTable[i - 1].chordID)){
+		   if((i > 0) && (this.fingerTable[i - 1] != null) && (this.fingerTable[i].chordID < this.fingerTable[i - 1].chordID)){
 			if((this.fingerTable[i].chordID + Math.pow(2, this.myInfo.chordIDLength)) > file.chordID){
 			   return this.fingerTable[i];
 			}
