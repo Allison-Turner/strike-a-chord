@@ -133,7 +133,7 @@ public class Member {
 	   System.out.println("Added file " + file.fileName + " with Chord ID " + file.chordID + " to my records.");
 	}
 	else{
-	   this.send(new AddFileMessage(file, this.memberInfo, hostMachine));
+	   this.send(new AddFileMessage(file, this.myInfo, hostMachine));
 	   System.out.println("Sent request to add file " + file.fileName + " with Chord ID " + file.chordID + " to "
 				+ hostMachine.IP.toString() + " with Chord ID " + hostMachine.chordID);
 	}
