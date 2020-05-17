@@ -223,9 +223,11 @@ public class Member {
 	   for(int i = slot; i >= 0; i--){
 		if(this.fingerTable[i] == null){
 		   this.fingerTable[i] = entry;
+		   i = -1;
 		}
 		else if((this.fingerTable[i] != originalFT[i]) && (entry.chordID < this.fingerTable[i].chordID)){
 		   this.fingerTable[i] = entry;
+		   i = -1;
 		}
 	   }
 	}
