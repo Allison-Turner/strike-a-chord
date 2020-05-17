@@ -101,8 +101,39 @@ public class Member {
 	   
    }
    
-   public void addFile(MyFile files) {
-   
+   public MemberInfo findNewFileMachine(MyFile file) {
+	//File is in my ID space range
+	if((file.chordID > predecessor.chordID) && (file.chordID <= myInfo.chordID)){
+	   return null;
+	}
+	//File should be stored by another machine
+	else{
+	   //Find the machine with the lowest Chord ID that's still larger than the file's Chord ID
+	   int potentialStorer = -1;
+	   for(int i = 0; i < this.fingerTable.length; i++){
+		if((i > 0) && (this.fingerTable[i].chordID < this.fingerTable[i - 1].chordID)){
+		   if((this.fingerTable[i].chordID + Math.pow(2, this.myInfo.chordIDLength)) > file.chordID){
+			return this.fingerTable[i];
+		   }
+		}
+		if(this.fingerTable[i].chordID > file.chordID){
+		   return this.fingerTable[i];
+		}
+	   }
+	   return this.fingerTable[this.fingerTable.length - 1];
+	}
+   }
+
+   public void addFile(MyFile file){
+	MemberInfo hostMachine = findNewFileMachine(file);
+	if(hostMachine == null){
+	   files.add(file);
+	   System.out.println("Added file " + file.fileName + " with Chord ID " + file.chordID + " to my records.");
+	}
+	else{
+	   this.send(new AddFileMessage(file, this.memberInfo, hostMachine));
+	   System.out.println("Sent request to add file " + file.fileName + " with Chord ID " + file.chordID + " to " hostMachine.IP + " with Chord ID " + hostMachine.chordID);
+	}
    }
 	 
    // Unimplmemented error -- check that things have joined correctly but we're not implementing joining
@@ -246,7 +277,7 @@ public class Member {
 	   if (command[0].equals("add")) {
 		String filename = command[1]; 
 		int key = member.myInfo.generateChordID(filename);
-				 
+		member.addFile(new MyFile(filename, key));	 
 		continue;
 	   }
 	   

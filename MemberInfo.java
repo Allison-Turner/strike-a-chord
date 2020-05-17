@@ -10,12 +10,12 @@ import java.security.NoSuchAlgorithmException;
 import java.nio.ByteBuffer;
 
 public class MemberInfo implements Serializable { 
+   public static final int chordIDLength = 5; // m in chord paper
+
    public InetAddress IP;
    public int receivePort;
    public int sendPort; 
-
    public int chordID;
-   public static final int chordIDLength = 3; // m in chord paper
 	
    private MessageDigest md;
 
