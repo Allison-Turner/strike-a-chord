@@ -235,7 +235,7 @@ public class Member {
 		System.out.println("IP: " + this.fingerTable[i].IP.toString());
 	   }
 	   else{
-		System.outprintln("Entry " + i + " is NULL");
+		System.out.println("Entry " + i + " is NULL");
 	   }
 	}
    }
