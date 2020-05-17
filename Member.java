@@ -197,8 +197,31 @@ public class Member {
 	}
    }
 
+   public synchronized void setPredecessor(MemberInfo neighbor){
+	//No null predecessor
+	if(this.predecessor == null){
+	   this.predecessor = neighbor;
+	}
+	//It took me like half an hour to figure out how to decide if a new machine was a better predecessor
+	// than a previously assigned predecessor with modulus number lines
+	//It makes sense if you draw a modulus circle and place the three nodes in various configurations
+	else if( (this.myInfo.chordID < this.predecessor.chordID) && (this.myInfo.chordID < neighbor.chordID) && (this.predecessor.chordID < neighbor.chordID) ){
+	   this.predecessor = neighbor;
+	}
+	else if( (this.myInfo.chordID > neighbor.chordID) & (neighbor.chordID > predecessor.chordID) & (this.myInfo.chordID > this.predecessor.chordID) ){
+	   this.predecessor = neighbor;
+	}
+	else if( (neighbor.chordID < this.myInfo.chordID) & (this.myInfo.chordID < this.predecessor.chordID) & (neighbor.chordID < this.predecessor.chordID) ){
+	   this.predecessor = neighbor;
+	}
+   }
+
    public synchronized void printFingerTable(){
 	System.out.println("My Chord ID: " + this.myInfo.chordID);
+	System.out.println("My IP: " + this.myInfo.IP.toString());
+	System.out.println("-----Predecessor -----");
+	System.out.println("Predecessor Chord ID: " + this.predecessor.chordID);
+	System.out.println("Predecessor IP: " + this.predecessor.IP.toString());
 	System.out.println("-----Finger Table-----");
 	for(int i = 0; i < this.fingerTable.length; i++){
 	   System.out.println("Entry :" + i);
@@ -227,8 +250,9 @@ public class Member {
 	Member member = new Member(Integer.parseInt(args[0]));
 
 	for(int i = 1; i < args.length; i+=2){
-	   MemberInfo newFinger = new MemberInfo(MemberInfo.parseIP(args[i]), Integer.parseInt(args[i+1]));
-	   member.addFingerTableEntry(newFinger);
+	   MemberInfo newNeighbor = new MemberInfo(MemberInfo.parseIP(args[i]), Integer.parseInt(args[i+1]));
+	   member.addFingerTableEntry(newNeighbor);
+	   member.setPredecessor(newNeighbor);
 	}
 
 	//No null finger table entries. 
@@ -241,7 +265,7 @@ public class Member {
 	   }
 	} 
 
-	//member.printFingerTable();
+	member.printFingerTable();
 
 	//We give the ReceivingSocket and Stabilizer handles on the invoking Member for when they 
 	//need to invoke a process that alters the Member's connectivity info or open a SendingSocket
