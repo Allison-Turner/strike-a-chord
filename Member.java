@@ -110,19 +110,27 @@ public class Member {
 	}
 	//File should be stored by another machine
 	else{
-	   //Find the machine with the lowest Chord ID that's still larger than the file's Chord ID
 	   int potentialStorer = -1;
+
+	   //Find the machine with the lowest Chord ID that's still larger than the file's Chord ID
 	   for(int i = 0; i < this.fingerTable.length; i++){
-		if((i > 0) && (this.fingerTable[i].chordID < this.fingerTable[i - 1].chordID)){
-		   if((this.fingerTable[i].chordID + Math.pow(2, this.myInfo.chordIDLength)) > file.chordID){
+		if(fingerTable[i] != null){
+
+		   //Store the index of the last nonempty finger table entry to use as the farthest reachable Chord ID just in case
+		   potentialStorer = i;
+
+		   if((i > 0) && (this.fingerTable[i].chordID < this.fingerTable[i - 1].chordID)){
+			if((this.fingerTable[i].chordID + Math.pow(2, this.myInfo.chordIDLength)) > file.chordID){
+			   return this.fingerTable[i];
+			}
+		   }
+
+		   if(this.fingerTable[i].chordID > file.chordID){
 			return this.fingerTable[i];
 		   }
 		}
-		if(this.fingerTable[i].chordID > file.chordID){
-		   return this.fingerTable[i];
-		}
 	   }
-	   return this.fingerTable[this.fingerTable.length - 1];
+	   return this.fingerTable[potentialStorer];
 	}
    }
 
