@@ -189,6 +189,7 @@ public class Member {
 	int slot = this.myInfo.chordIDLength;
 
 	for(int i = 0; i < this.myInfo.chordIDLength; i++){
+	   System.out.println(((myInfo.chordID + Math.pow(2, i)) % Math.pow(2, myInfo.chordIDLength)));
 	   if(newEntry.chordID < ((myInfo.chordID + Math.pow(2, i)) % Math.pow(2, myInfo.chordIDLength)) ){
 		slot = i;
 	   }
@@ -197,7 +198,7 @@ public class Member {
 	System.out.println(newEntry.chordID + " would belong in slot " + slot);
 
 	if(slot == this.myInfo.chordIDLength){
-	   System.out.println("This machine's Chord ID is too high to be included in the finger table.");
+	   System.out.println("This machine's Chord ID is too far away to be included in the finger table.");
 	}
 	else if((this.fingerTable[slot] == null) || (this.fingerTable[slot].chordID < newEntry.chordID) ){
 	   this.fingerTable[slot] = newEntry;
