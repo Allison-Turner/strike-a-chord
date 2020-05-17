@@ -191,9 +191,7 @@ public class Member {
       System.arraycopy(ft, 0, this.fingerTable, 0, myInfo.chordIDLength); 
     }
 
-   public synchronized void addFingerTableEntry(MemberInfo newEntry){
-	System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
-
+   public int findFingerTableSlot(MemberInfo newEntry){
 	int slot = this.myInfo.chordIDLength;
 
 	for(int i = 0; i < this.myInfo.chordIDLength; i++){
@@ -202,7 +200,12 @@ public class Member {
 		slot = i;
 	   }
 	}
+	return slot;
+   }
 
+   public void addFingerTableEntry(MemberInfo newEntry){
+	System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
+	int slot = findFingerTableSlot(newEntry);
 	System.out.println(newEntry.chordID + " would belong in slot " + slot);
 
 	if(slot == this.myInfo.chordIDLength){
@@ -214,7 +217,21 @@ public class Member {
 	}
    }
 
-   public synchronized void setPredecessor(MemberInfo neighbor){
+   public void fillNullFTEntry(MemberInfo entry, MemberInfo[] originalFT){
+	int slot = findFingerTableSlot(entry);
+	if(slot < this.fingerTable.length){
+	   for(int i = slot; i >= 0; i--){
+		if(this.fingerTable[i] == null){
+		   this.fingerTable[i] = entry;
+		}
+		else if((this.fingerTable[i] != originalFT[i]) && (entry.chordID < this.fingerTable[i].chordID)){
+		   this.fingerTable[i] = entry;
+		}
+	   }
+	}
+   }
+
+   public void setPredecessor(MemberInfo neighbor){
 	//No null predecessor
 	if(this.predecessor == null){
 	   this.predecessor = neighbor;
@@ -225,10 +242,10 @@ public class Member {
 	else if( (this.myInfo.chordID < this.predecessor.chordID) && (this.myInfo.chordID < neighbor.chordID) && (this.predecessor.chordID < neighbor.chordID) ){
 	   this.predecessor = neighbor;
 	}
-	else if( (this.myInfo.chordID > neighbor.chordID) & (neighbor.chordID > predecessor.chordID) & (this.myInfo.chordID > this.predecessor.chordID) ){
+	else if( (this.myInfo.chordID > neighbor.chordID) && (neighbor.chordID > predecessor.chordID) && (this.myInfo.chordID > this.predecessor.chordID) ){
 	   this.predecessor = neighbor;
 	}
-	else if( (neighbor.chordID < this.myInfo.chordID) & (this.myInfo.chordID < this.predecessor.chordID) & (neighbor.chordID < this.predecessor.chordID) ){
+	else if( (neighbor.chordID < this.myInfo.chordID) && (this.myInfo.chordID < this.predecessor.chordID) && (neighbor.chordID < this.predecessor.chordID) ){
 	   this.predecessor = neighbor;
 	}
    }
@@ -279,6 +296,18 @@ public class Member {
 	   MemberInfo newNeighbor = new MemberInfo(MemberInfo.parseIP(args[i]), Integer.parseInt(args[i+1]));
 	   member.addFingerTableEntry(newNeighbor);
 	   member.setPredecessor(newNeighbor);
+	}
+
+	MemberInfo[] FTwithHoles = member.fingerTable;
+
+	//A finger table with holes in it can cause problems. There are 2 approaches: 
+	//sprinkle the remaining nodes through the empty FT slots (inconsistent with desired properties but allows for more diverse knowledge of network thus better searches)
+	//or copy nodes in lower slots into empty higher slots (keeps the FT consistent with the desired properties but can limit search ability)
+	for(int i = 1; i < args.length; i+=2){
+	   MemberInfo newNeighbor = new MemberInfo(MemberInfo.parseIP(args[i]), Integer.parseInt(args[i+1]));
+	   if(!Arrays.asList(member.fingerTable).contains(newNeighbor)){
+		member.fillNullFTEntry(newNeighbor, FTwithHoles);
+	   }
 	}
 
 /*	//No null finger table entries. 
