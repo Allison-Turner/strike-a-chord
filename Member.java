@@ -195,7 +195,7 @@ public class Member {
 	int slot = this.myInfo.chordIDLength;
 
 	for(int i = 0; i < this.myInfo.chordIDLength; i++){
-	   System.out.println(((myInfo.chordID + Math.pow(2, i)) % Math.pow(2, myInfo.chordIDLength)));
+	   //System.out.println(((myInfo.chordID + Math.pow(2, i)) % Math.pow(2, myInfo.chordIDLength)));
 	   if(newEntry.chordID < ((myInfo.chordID + Math.pow(2, i)) % Math.pow(2, myInfo.chordIDLength)) ){
 		slot = i;
 	   }
@@ -206,10 +206,10 @@ public class Member {
    public void addFingerTableEntry(MemberInfo newEntry){
 	System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
 	int slot = findFingerTableSlot(newEntry);
-	System.out.println(newEntry.chordID + " would belong in slot " + slot);
+	//System.out.println(newEntry.chordID + " would belong in slot " + slot);
 
 	if(slot == this.myInfo.chordIDLength){
-	   System.out.println("This machine's Chord ID is too far away to be included in the finger table.");
+	   //System.out.println("This machine's Chord ID is too far away to be included in the finger table.");
 	}
 	else if((this.fingerTable[slot] == null) || (this.fingerTable[slot].chordID < newEntry.chordID) ){
 	   this.fingerTable[slot] = newEntry;
@@ -220,14 +220,14 @@ public class Member {
    public void fillNullFTEntry(MemberInfo entry, MemberInfo[] originalFT){
 	int slot = findFingerTableSlot(entry);
 	if(slot < this.fingerTable.length){
-	   for(int i = slot; i >= 0; i--){
+	   for(int i = 0; i <= slot; i++){
 		if(this.fingerTable[i] == null){
 		   this.fingerTable[i] = entry;
-		   i = -1;
+		   i = slot + 1;
 		}
 		else if((this.fingerTable[i] != originalFT[i]) && (entry.chordID < this.fingerTable[i].chordID)){
 		   this.fingerTable[i] = entry;
-		   i = -1;
+		   i = slot + 1;
 		}
 	   }
 	}
