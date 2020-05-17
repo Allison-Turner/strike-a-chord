@@ -134,7 +134,8 @@ public class Member {
 	}
 	else{
 	   this.send(new AddFileMessage(file, this.memberInfo, hostMachine));
-	   System.out.println("Sent request to add file " + file.fileName + " with Chord ID " + file.chordID + " to " hostMachine.IP + " with Chord ID " + hostMachine.chordID);
+	   System.out.println("Sent request to add file " + file.fileName + " with Chord ID " + file.chordID + " to "
+				+ hostMachine.IP.toString() + " with Chord ID " + hostMachine.chordID);
 	}
    }
 	 
