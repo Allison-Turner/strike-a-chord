@@ -220,14 +220,23 @@ public class Member {
 	System.out.println("My Chord ID: " + this.myInfo.chordID);
 	System.out.println("My IP: " + this.myInfo.IP.toString());
 	System.out.println("-----Predecessor -----");
-	System.out.println("Predecessor Chord ID: " + this.predecessor.chordID);
-	System.out.println("Predecessor IP: " + this.predecessor.IP.toString());
+	if(this.predecessor != null){
+	   System.out.println("Predecessor Chord ID: " + this.predecessor.chordID);
+	   System.out.println("Predecessor IP: " + this.predecessor.IP.toString());
+	}
+	else{
+	   System.out.println("Predecessor is NULL");
+	}
 	System.out.println("-----Finger Table-----");
 	for(int i = 0; i < this.fingerTable.length; i++){
-	   System.out.println("Entry :" + i);
-	   System.out.println(this.fingerTable[i]);
-	   System.out.println("Chord ID: " + this.fingerTable[i].chordID);
-	   System.out.println("IP: " + this.fingerTable[i].IP.toString());
+	   if(this.fingerTable[i] != null){
+		System.out.println("Entry :" + i);
+		System.out.println("Chord ID: " + this.fingerTable[i].chordID);
+		System.out.println("IP: " + this.fingerTable[i].IP.toString());
+	   }
+	   else{
+		System.outprintln("Entry " + i + " is NULL");
+	   }
 	}
    }
     
