@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 public class MyFile implements Serializable{
    public int chordID;
    public String fileName;
