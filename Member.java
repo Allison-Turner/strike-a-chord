@@ -50,25 +50,25 @@ public class Member {
    /* Returns a MemberInfo with the successor of the chordID if we can find it in our fingerTable
    * Else, send a message to the closest chordID in the fingerTable and return null
    */
-   public MemberInfo findSuccessor(int chordID, MemberInfo requester) {
+   public  MemberInfo findSuccessor(int chordID, MemberInfo requester) {
 	   // if its us
-	if((this.myInfo.chordID > chordID) && (chordID <= this.fingerTable[0].chordID)) { 
-	   return this.myInfo;
-	} 
-	else { 
+	   synchronized(this) {
+		   if((this.myInfo.chordID > chordID) && (chordID <= this.fingerTable[0].chordID)) { 
+		   return this.myInfo;
+		   } 
+	   }
 	   MemberInfo nextClosest = closestPreceding(chordID);
 			 
-	  RequestSuccessor message = new RequestSuccessor(chordID, requester, nextClosest);
-	  this.send(message);
+	   RequestSuccessor message = new RequestSuccessor(chordID, requester, nextClosest);
+	   this.send(message);
 			 
 	   // RETURNING NULL BECAUSE NO OPTION TYPE #ANGERY
 	   return null; 
-			 
-	}
+	
    }
 	 
-   public MemberInfo closestPreceding(int chordID) {
-	for (int i = this.myInfo.chordIDLength; i >= 1; i--) {
+   public synchronized MemberInfo closestPreceding(int chordID) {
+	for (int i = this.myInfo.chordIDLength - 1; i >= 1; i--) {
 	   int tableID = (this.fingerTable[i].chordID); 
 	   if (this.myInfo.chordID > tableID && this.myInfo.chordID <= chordID) { 
 		return fingerTable[i];
@@ -78,27 +78,29 @@ public class Member {
    }
    
    public String fileSearch(int key, MemberInfo requester) throws FileNotFoundException {
-	   if((this.myInfo.chordID > key) && (key <= this.fingerTable[0].chordID)) { 
-		   for (MyFile file: this.files) {
-			   if(file.chordID == key) {
-				   return file.fileName;
-			   }
-		   }
-		   // we didn't find the file
-		   
-		   throw new FileNotFoundException(); 
-		} 
-		else { 
-		  MemberInfo nextClosest = closestPreceding(key);
-				 
-		  RequestFile message = new RequestFile(key, requester, nextClosest);
-		  this.send(message);
-				 
-		   // RETURNING NULL BECAUSE NO OPTION TYPE #ANGERY
-		   return null; 
-				 
-		}
 	   
+	   
+	   synchronized(this) {
+		   if((this.myInfo.chordID > key) && (key <= this.fingerTable[0].chordID)) { 
+			   for (MyFile file: this.files) {
+				   if(file.chordID == key) {
+					   return file.fileName;
+				   }
+			   }
+			   // we didn't find the file
+			   throw new FileNotFoundException(); 
+		   }
+	   }
+
+
+	   MemberInfo nextClosest = closestPreceding(key);
+
+	   RequestFile message = new RequestFile(key, requester, nextClosest);
+	   this.send(message);
+
+	   // RETURNING NULL BECAUSE NO OPTION TYPE #ANGERY
+	   return null; 
+
    }
    
    public MemberInfo findNewFileMachine(MyFile file) {
@@ -137,7 +139,7 @@ public class Member {
    }
 	 
    // Unimplmemented error -- check that things have joined correctly but we're not implementing joining
-   public void stabilize(){
+   public synchronized void stabilize(){
 	   
 	System.out.println("Stabilizing.");
 	//Request predecessor's successor
@@ -153,7 +155,7 @@ public class Member {
    }
 
    // Also part of join -- could implement but not a priority
-   public void fixFingers() {
+   public synchronized void fixFingers() {
    
    }
 	 
@@ -171,7 +173,7 @@ public class Member {
    }
 
     /* Returns our finger table */
-    public MemberInfo[] getFingerTable() {
+    public synchronized MemberInfo[] getFingerTable() {
         return this.fingerTable; 
     }
     
@@ -180,7 +182,7 @@ public class Member {
       System.arraycopy(ft, 0, this.fingerTable, 0, myInfo.chordIDLength); 
     }
 
-   public void addFingerTableEntry(MemberInfo newEntry){
+   public synchronized void addFingerTableEntry(MemberInfo newEntry){
 	//System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
 	int slot = 0;
 	for(int i = 0; i < myInfo.chordIDLength; i++){
@@ -194,7 +196,7 @@ public class Member {
 	}
    }
 
-   public void printFingerTable(){
+   public synchronized void printFingerTable(){
 	System.out.println("My Chord ID: " + this.myInfo.chordID);
 	System.out.println("-----Finger Table-----");
 	for(int i = 0; i < this.fingerTable.length; i++){
