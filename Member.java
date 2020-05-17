@@ -191,9 +191,12 @@ public class Member {
 		slot = i;
 	   }
 	}
+
+	System.out.println(newEntry.chordID + " would belong in slot " + slot);
+
 	if((this.fingerTable[slot] == null) || (this.fingerTable[slot].chordID < newEntry.chordID) ){
 	   this.fingerTable[slot] = newEntry;
-	   System.out.println("Added " + newEntry.chordID + "to slot " + slot);
+	   System.out.println("Added " + newEntry.chordID + " to slot " + slot);
 	}
    }
 
