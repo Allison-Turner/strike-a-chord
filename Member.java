@@ -264,7 +264,7 @@ public class Member {
 	   member.setPredecessor(newNeighbor);
 	}
 
-	//No null finger table entries. 
+/*	//No null finger table entries. 
 	//If no members fit into the ID space (id + 2^i) mod 2^m, 
 	//then the entry for (id + 2^(i-1)) mod 2^m will be duplicated
 	for(int i = 1; i < member.fingerTable.length; i++){
@@ -273,7 +273,7 @@ public class Member {
 		//System.out.println("Copying previous finger table entry into slot " + i);
 	   }
 	} 
-
+*/
 	member.printFingerTable();
 
 	//We give the ReceivingSocket and Stabilizer handles on the invoking Member for when they 
