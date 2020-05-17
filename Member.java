@@ -185,8 +185,10 @@ public class Member {
 
    public synchronized void addFingerTableEntry(MemberInfo newEntry){
 	System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
-	int slot = 0;
-	for(int i = 0; i < myInfo.chordIDLength; i++){
+
+	int slot = this.myInfo.chordIDLength;
+
+	for(int i = 0; i < this.myInfo.chordIDLength; i++){
 	   if(newEntry.chordID < ((myInfo.chordID + Math.pow(2, i)) % Math.pow(2, myInfo.chordIDLength)) ){
 		slot = i;
 	   }
@@ -194,7 +196,10 @@ public class Member {
 
 	System.out.println(newEntry.chordID + " would belong in slot " + slot);
 
-	if((this.fingerTable[slot] == null) || (this.fingerTable[slot].chordID < newEntry.chordID) ){
+	if(slot == this.myInfo.chordIDLength){
+	   System.out.println("This machine's Chord ID is too high to be included in the finger table.");
+	}
+	else if((this.fingerTable[slot] == null) || (this.fingerTable[slot].chordID < newEntry.chordID) ){
 	   this.fingerTable[slot] = newEntry;
 	   System.out.println("Added " + newEntry.chordID + " to slot " + slot);
 	}
