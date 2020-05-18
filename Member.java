@@ -238,7 +238,7 @@ public class Member {
 
 	for(int i = 0; i < this.myInfo.chordIDLength; i++){
 	   //System.out.println(((myInfo.chordID + Math.pow(2, i)) % Math.pow(2, myInfo.chordIDLength)));
-	   if( this.compareChordIds( ((this.myInfo.chordID + Math.pow(2, i)) % Math.pow(2, this.myInfo.chordIDLength)), newEntry.chordID) ){
+	   if( this.compareChordIds( ((this.myInfo.chordID + ((int) Math.pow(2, i))) % ((int) Math.pow(2, this.myInfo.chordIDLength))), newEntry.chordID) ){
 		slot = i;
 	   }
 	}
