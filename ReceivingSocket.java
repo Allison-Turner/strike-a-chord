@@ -47,8 +47,10 @@ public class ReceivingSocket implements Runnable {
 			try { 
 				String file = myself.fileSearch(rf.key, rf.sender); 
 				if(file == null) {
+					System.out.println("Forwarded..");
 					// message has been forwarded via finger table; do nothing
 				} else {
+					System.out.println("Sending requested file to " + rf.sender.chordID);
 					// send the file back
 					RequestFileResponse message = new RequestFileResponse(file, this.myself.myInfo, rf.sender); 
 					this.myself.send(message);
@@ -61,6 +63,7 @@ public class ReceivingSocket implements Runnable {
 		} 
 		else if (inObject instanceof RequestFileResponse) {
 			
+			System.out.println(myself.myInfo.chordID + " got a request file response!");
 			if (inObject instanceof FileNotFoundResponse) { // inside bc FileNotFoundResponse a subclass of RequestFileResponse
 				
 				FileNotFoundResponse fnfr = (FileNotFoundResponse) inObject;

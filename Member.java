@@ -79,11 +79,12 @@ public class Member {
    
    public String fileSearch(int key, MemberInfo requester) throws FileNotFoundException {
 	   
-	   
+	   System.out.println("Searching for " + key + " on " + requester.chordID);
 	   synchronized(this) {
 		   if((this.myInfo.chordID > key) && (key <= this.fingerTable[0].chordID)) { 
 			   for (MyFile file: this.files) {
 				   if(file.chordID == key) {
+					   System.out.println("I have the file!");
 					   return file.fileName;
 				   }
 			   }
@@ -103,6 +104,8 @@ public class Member {
 
    }
    
+   // finds a machine to add a file to
+   // returns null if the file should be added on this machine
    public MemberInfo findNewFileMachine(MyFile file) {
 	//File is in my ID space range
 	if((file.chordID > predecessor.chordID) && (file.chordID <= myInfo.chordID)){
@@ -113,6 +116,7 @@ public class Member {
 	   int potentialStorer = -1;
 
 	   //Find the machine with the lowest Chord ID that's still larger than the file's Chord ID
+	   
 	   for(int i = 0; i < this.fingerTable.length; i++){
 		if(fingerTable[i] != null){
 
