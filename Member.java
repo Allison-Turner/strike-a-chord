@@ -1,4 +1,4 @@
-import java.util.*;
+import java.util.*; 
 import java.io.*;
 import java.net.*;
 import java.util.concurrent.*;
@@ -234,6 +234,18 @@ public class Member {
 	}
 	return dist;
    }
+   
+   // if a is to the right of b, return true, else false
+   
+   public boolean compareChordIds(int a, int b) {
+	   if (Math.abs(a - b) > Math.pow(2, this.myInfo.chordIDLength - 1)) {
+		   return b > a; 
+	   } else {
+		   return a > b;
+	   }
+	  
+   }
+   
 
    public void addFingerTableEntry(MemberInfo newEntry){
 	//System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
