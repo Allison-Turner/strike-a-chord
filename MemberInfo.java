@@ -5,9 +5,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.InetAddress; 
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException; 
-import java.nio.ByteBuffer;
+//import java.security.MessageDigest;
+//import java.security.NoSuchAlgorithmException; 
+//import java.nio.ByteBuffer;
 
 public class MemberInfo implements Serializable { 
    public static final int chordIDLength = 4; // m in chord paper
@@ -17,7 +17,7 @@ public class MemberInfo implements Serializable {
    public int sendPort; 
    public int chordID;
 	
-   private MessageDigest md;
+   //private MessageDigest md;
 
    //Info about another machine
    public MemberInfo(InetAddress IP, int receivePort){
@@ -25,12 +25,12 @@ public class MemberInfo implements Serializable {
 	this.sendPort = 4000; 
 	this.IP = IP;
       
-	try { 
+	/*try { 
        md = MessageDigest.getInstance("SHA-256");
 	} 
 	catch (NoSuchAlgorithmException e) {
 	   System.out.println("Couldn't find the algorithm \"SHA-256\""); 
-	}
+	}*/
    	this.chordID = generateChordID(this.IP.toString());
    }
 
@@ -40,12 +40,12 @@ public class MemberInfo implements Serializable {
 	this.sendPort = 4000; 
 	getLocalIP();
       
-	try { 
+	/*try { 
     	  md = MessageDigest.getInstance("SHA-256");
 	} 
 	catch (NoSuchAlgorithmException e) {
 	   System.out.println("Couldn't find the algorithm \"SHA-256\""); 
-	}
+	}*/
    	this.chordID = generateChordID(this.IP.toString());
    }
 
@@ -55,7 +55,8 @@ public class MemberInfo implements Serializable {
    
    //Publicly available function to generate Chord ID for any value
    public int generateChordID(String value){
-	this.md.update(value.getBytes());
+	return IDGenerator.generateChordID(value, chordIDLength);
+	/*this.md.update(value.getBytes());
 	byte[] valueDigest = md.digest();
 	md.reset(); 
 	ByteBuffer wrapped = ByteBuffer.wrap(valueDigest); 
@@ -66,7 +67,7 @@ public class MemberInfo implements Serializable {
 	if (chordID < 0){
 	    chordID += (int) Math.pow(2, this.chordIDLength);
 	}
-	return chordID; 
+	return chordID; */
    }
 
    public static InetAddress parseIP(String address){
