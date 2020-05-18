@@ -203,6 +203,14 @@ public class Member {
 	return slot;
    }
 
+   public int findIDProximity(int chordID1, int chordID2){
+	int maxID = ((int) Math.pow(2, this.myInfo.chordIDLength)) - 1;
+	int dist1 = Math.min(Math.abs(maxID - chordID1), Math.abs(chordID1 - maxID));
+	int dist2 = Math.min(Math.abs(maxID - chordID2), Math.abs(chordID2 - maxID));
+	int distance = Math.min((dist1 - dist2), (dist2 - dist1));
+	return distance;
+   }
+
    public void addFingerTableEntry(MemberInfo newEntry){
 	System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
 	int slot = findFingerTableSlot(newEntry);
@@ -252,9 +260,26 @@ public class Member {
 	}
    }
 
+   public void setSuccessor(MemberInfo neighbor){
+	if(this.fingerTable[0] == null){
+	   this.fingerTable[0] = neighbor;
+	}
+	//Again, modulus number lines are hard. There is definitely a better way to do this.
+	else if( (this.myInfo.chordID < neighbor.chordID) && (neighbor.chordID < this.fingerTable[0].chordID) && (this.myInfo.chordID < this.fingerTable[0].chordID) ){
+	   this.fingerTable[0] = neighbor;
+	}
+	else if( (this.myInfo.chordID > this.fingerTable[0].chordID) && (this.fingerTable[0].chordID > neighbor.chordID) && (this.myInfo.chordID > neighbor.chordID) ){
+	   this.fingerTable[0] = neighbor;
+	}
+	else if( (neighbor.chordID > this.myInfo.chordID) && (this.myInfo.chordID > this.fingerTable[0].chordID) && (neighbor.chordID > this.fingerTable[0].chordID) ){
+	   this.fingerTable[0] = neighbor;
+	}
+   }
+
    public synchronized void printFingerTable(){
 	System.out.println("My Chord ID: " + this.myInfo.chordID);
 	System.out.println("My IP: " + this.myInfo.IP.toString());
+
 	System.out.println("-----Predecessor -----");
 	if(this.predecessor != null){
 	   System.out.println("Predecessor Chord ID: " + this.predecessor.chordID);
@@ -263,6 +288,7 @@ public class Member {
 	else{
 	   System.out.println("Predecessor is NULL");
 	}
+
 	System.out.println("-----Finger Table-----");
 	for(int i = 0; i < this.fingerTable.length; i++){
 	   if(this.fingerTable[i] != null){
@@ -298,6 +324,7 @@ public class Member {
 	   MemberInfo newNeighbor = new MemberInfo(MemberInfo.parseIP(args[i]), Integer.parseInt(args[i+1]));
 	   member.addFingerTableEntry(newNeighbor);
 	   member.setPredecessor(newNeighbor);
+	   member.setSuccessor(newNeighbor);
 	}
 
 	MemberInfo[] FTwithHoles = member.fingerTable;
@@ -316,7 +343,7 @@ public class Member {
 	//If no members fit into the ID space (id + 2^i) mod 2^m, 
 	//then the entry for (id + 2^(i-1)) mod 2^m will be duplicated
 	for(int i = 1; i < member.fingerTable.length; i++){
-	   if(member.fingerTable[i] == null){
+	   if(member.fingerTable[i] == null && member.fingerTable[i - 1] != null){
 		member.fingerTable[i] = member.fingerTable[i - 1];
 		//System.out.println("Copying previous finger table entry into slot " + i);
 	   }
