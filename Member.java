@@ -225,22 +225,6 @@ public class Member {
 	}
    }
 
-   public void fillNullFTEntry(MemberInfo entry, MemberInfo[] originalFT){
-	int slot = findFingerTableSlot(entry);
-	if(slot < this.fingerTable.length){
-	   for(int i = 0; i <= slot; i++){
-		if(this.fingerTable[i] == null){
-		   this.fingerTable[i] = entry;
-		   i = slot + 1;
-		}
-		else if((this.fingerTable[i] != originalFT[i]) && (entry.chordID < this.fingerTable[i].chordID)){
-		   this.fingerTable[i] = entry;
-		   i = slot + 1;
-		}
-	   }
-	}
-   }
-
    public void setPredecessor(MemberInfo neighbor){
 	//No null predecessor
 	if(this.predecessor == null){
@@ -327,28 +311,22 @@ public class Member {
 	   member.setSuccessor(newNeighbor);
 	}
 
-	MemberInfo[] FTwithHoles = member.fingerTable;
+	MemberInfo lastNonNull = member.fingerTable[0];
 
-	//A finger table with holes in it can cause problems. There are 2 approaches: 
-	//sprinkle the remaining nodes through the empty FT slots (inconsistent with desired properties but allows for more diverse knowledge of network thus better searches)
-	//or copy nodes in lower slots into empty higher slots (keeps the FT consistent with the desired properties but can limit search ability)
-	for(int i = 1; i < args.length; i+=2){
-	   MemberInfo newNeighbor = new MemberInfo(MemberInfo.parseIP(args[i]), Integer.parseInt(args[i+1]));
-	   if(!Arrays.asList(member.fingerTable).contains(newNeighbor)){
-		member.fillNullFTEntry(newNeighbor, FTwithHoles);
-	   }
-	}
-
-/*	//No null finger table entries. 
+	//No null finger table entries. 
 	//If no members fit into the ID space (id + 2^i) mod 2^m, 
-	//then the entry for (id + 2^(i-1)) mod 2^m will be duplicated
+	//then the entry for (id + 2^(j)) mod 2^m, where j was the 
+	//last non-null entry, will be duplicated
 	for(int i = 1; i < member.fingerTable.length; i++){
-	   if(member.fingerTable[i] == null && member.fingerTable[i - 1] != null){
-		member.fingerTable[i] = member.fingerTable[i - 1];
-		//System.out.println("Copying previous finger table entry into slot " + i);
+	   if(member.fingerTable[i] == null){
+		member.fingerTable[i] = lastNonNull;
+		//System.out.println("Copying last non-null finger table entry into slot " + i);
+	   }
+	   else{
+		lastNonNull = member.fingerTable[i];
 	   }
 	} 
-*/
+
 	member.printFingerTable();
 
 	//We give the ReceivingSocket and Stabilizer handles on the invoking Member for when they 
