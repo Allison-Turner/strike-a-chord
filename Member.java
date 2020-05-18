@@ -147,6 +147,9 @@ public class Member {
 	   System.out.println("Added file " + file.fileName + " with Chord ID " + file.chordID + " to my records.");
 	}
 	else{
+	   if(this.findForwardIDDistance(hostMachine.chordID, file.chordID) > this.findForwardIDDistance(originator.chordID, file.chordID) ){
+		System.out.println("The distance between the next hop and the desired ID is greater than the distance between the originator and the desired ID.");
+	   }
 	   this.send(new AddFileMessage(file, originator, hostMachine));
 	   System.out.println("Sent request to add file " + file.fileName + " with Chord ID " + file.chordID + " to "
 				+ hostMachine.IP.toString() + " with Chord ID " + hostMachine.chordID);
@@ -215,6 +218,17 @@ public class Member {
 	int dist2 = Math.min(Math.abs(maxID - chordID2), Math.abs(chordID2 - maxID));
 	int distance = Math.min((dist1 - dist2), (dist2 - dist1));
 	return distance;
+   }
+
+   public int findForwardIDDistance(int higherChordID, int lowerChordID){
+	int max = (int) Math.pow(2, this.myInfo.chordIDLength);
+	int dist1 = max - lowerChordID;
+	int dist2 = max - higherChordID;
+	int dist = (dist1 - dist2);
+	if(dist < 0){
+	   dist = max + dist;
+	}
+	return dist;
    }
 
    public void addFingerTableEntry(MemberInfo newEntry){

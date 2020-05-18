@@ -10,7 +10,7 @@ import java.net.URL;
 //import java.nio.ByteBuffer;
 
 public class MemberInfo implements Serializable { 
-   public static final int chordIDLength = 3; // m in chord paper
+   public static final int chordIDLength = 4; // m in chord paper
 
    public InetAddress IP;
    public int receivePort;
