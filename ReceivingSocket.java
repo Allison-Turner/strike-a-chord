@@ -40,9 +40,9 @@ public class ReceivingSocket implements Runnable {
 		else if (inObject instanceof RequestSuccessorResponse){
 			RequestSuccessorResponse rsr = (RequestSuccessorResponse) inObject;
 			System.out.println("The successor of " + rsr.chordID + " is " + rsr.successor.chordID);
-		} else if (inObject instanceof RequestFile) {
+		} 
+		else if (inObject instanceof RequestFile) {
 			RequestFile rf = (RequestFile) inObject; 
-			
 			
 			try { 
 				String file = myself.fileSearch(rf.key, rf.sender); 
@@ -58,7 +58,8 @@ public class ReceivingSocket implements Runnable {
 				// SEND A FILE NOT FOUND MESSAGE
 				
 			}
-		} else if (inObject instanceof RequestFileResponse) {
+		} 
+		else if (inObject instanceof RequestFileResponse) {
 			
 			if (inObject instanceof FileNotFoundResponse) { // inside bc FileNotFoundResponse a subclass of RequestFileResponse
 				
@@ -70,6 +71,10 @@ public class ReceivingSocket implements Runnable {
 				RequestFileResponse rfr = (RequestFileResponse) inObject;
 				System.out.println("File " + rfr.filename + " was found at " + rfr.sender.chordID + "!");
 			}
+		}
+		else if(inObject instanceof AddFileMessage){
+		   AddFileMessage addRequest = (AddFileMessage) inObject;
+		   this.myself.addFile(addRequest.file, addRequest.sender);
 		}
 		else {
 		   System.err.println("Recieved an object of unknown message type"); 

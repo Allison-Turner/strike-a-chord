@@ -134,14 +134,14 @@ public class Member {
 	}
    }
 
-   public void addFile(MyFile file){
+   public void addFile(MyFile file, MemberInfo originator){
 	MemberInfo hostMachine = findNewFileMachine(file);
 	if(hostMachine == null){
 	   files.add(file);
 	   System.out.println("Added file " + file.fileName + " with Chord ID " + file.chordID + " to my records.");
 	}
 	else{
-	   this.send(new AddFileMessage(file, this.myInfo, hostMachine));
+	   this.send(new AddFileMessage(file, originator, hostMachine));
 	   System.out.println("Sent request to add file " + file.fileName + " with Chord ID " + file.chordID + " to "
 				+ hostMachine.IP.toString() + " with Chord ID " + hostMachine.chordID);
 	}
@@ -366,7 +366,7 @@ public class Member {
 	   if (command[0].equals("add")) {
 		String filename = command[1]; 
 		int key = member.myInfo.generateChordID(filename);
-		member.addFile(new MyFile(filename, key));	 
+		member.addFile(new MyFile(filename, key), member.myInfo);	 
 		continue;
 	   }
 	   
