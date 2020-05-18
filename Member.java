@@ -118,28 +118,33 @@ public class Member {
 	   //Find the machine with the lowest Chord ID that's still larger than the file's Chord ID
 	   
 	   for(int i = 0; i < this.fingerTable.length; i++){
-		if(fingerTable[i] != null){
+/*		if(fingerTable[i] != null){
 
 		   //Store the index of the last nonempty finger table entry to use as the farthest reachable Chord ID just in case
 		   potentialStorer = i;
 
 		   if((i > 0) && (this.fingerTable[i - 1] != null) && (this.fingerTable[i].chordID < this.fingerTable[i - 1].chordID)){
 			if((this.fingerTable[i].chordID + Math.pow(2, this.myInfo.chordIDLength)) > file.chordID){
-			   System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAA");
-			   System.out.println(this.fingerTable[i].IP.toString() + " " + this.fingerTable[i].chordID);
+			   //System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAA");
+			   //System.out.println(this.fingerTable[i].IP.toString() + " " + this.fingerTable[i].chordID);
 			   return this.fingerTable[i];
 			}
 		   }
 
 		   if(this.fingerTable[i].chordID > file.chordID){
-			System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
-			System.out.println(this.fingerTable[i].IP.toString() + " " + this.fingerTable[i].chordID);
+			//System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+			//System.out.println(this.fingerTable[i].IP.toString() + " " + this.fingerTable[i].chordID);
 			return this.fingerTable[i];
 		   }
+		}*/
+
+		if( this.compareChordIds( this.fingerTable[i].chordID, file.chordID ) ){
+		   potentialStorer = i;
 		}
+
 	   }
-	   System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCC");
-	   System.out.println(this.fingerTable[potentialStorer].IP.toString() + " " + this.fingerTable[potentialStorer].chordID);
+	   //System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCC");
+	   //System.out.println(this.fingerTable[potentialStorer].IP.toString() + " " + this.fingerTable[potentialStorer].chordID);
 	   return this.fingerTable[potentialStorer];
 	}
    }
@@ -151,9 +156,9 @@ public class Member {
 	   System.out.println("Added file " + file.fileName + " with Chord ID " + file.chordID + " to my records.");
 	}
 	else{
-	   if(this.findForwardIDDistance(hostMachine.chordID, file.chordID) > this.findForwardIDDistance(originator.chordID, file.chordID) ){
+	   /*if(this.findForwardIDDistance(hostMachine.chordID, file.chordID) > this.findForwardIDDistance(originator.chordID, file.chordID) ){
 		System.out.println("The distance between the next hop and the desired ID is greater than the distance between the originator and the desired ID.");
-	   }
+	   }*/
 	   this.send(new AddFileMessage(file, originator, hostMachine));
 	   System.out.println("Sent request to add file " + file.fileName + " with Chord ID " + file.chordID + " to "
 				+ hostMachine.IP.toString() + " with Chord ID " + hostMachine.chordID);
@@ -172,26 +177,20 @@ public class Member {
    }
 
    // Also part of join -- not implementing
-   public void notify(int chordID) { 
-	
-   }
+   public void notify(int chordID) {}
 
    // Also part of join -- could implement but not a priority
-   public synchronized void fixFingers() {
-   
-   }
+   public synchronized void fixFingers() {}
 	 
    // we will implement this
-   public void checkPredecessor() {
-
-   }
+   public void checkPredecessor() {}
 	 
    
    //helpers
    
    // enables us to send messages from recieving socket
    public void send(Message m) {
-	   this.pool.execute(new SendingSocket(m));
+	this.pool.execute(new SendingSocket(m));
    }
 
     /* Returns our finger table */
@@ -204,19 +203,7 @@ public class Member {
       System.arraycopy(ft, 0, this.fingerTable, 0, myInfo.chordIDLength); 
     }
 
-   public int findFingerTableSlot(MemberInfo newEntry){
-	int slot = this.myInfo.chordIDLength;
-
-	for(int i = 0; i < this.myInfo.chordIDLength; i++){
-	   //System.out.println(((myInfo.chordID + Math.pow(2, i)) % Math.pow(2, myInfo.chordIDLength)));
-	   if(newEntry.chordID < ((myInfo.chordID + Math.pow(2, i)) % Math.pow(2, myInfo.chordIDLength)) ){
-		slot = i;
-	   }
-	}
-	return slot;
-   }
-
-   public int findIDProximity(int chordID1, int chordID2){
+/*   public int findIDProximity(int chordID1, int chordID2){
 	int maxID = ((int) Math.pow(2, this.myInfo.chordIDLength)) - 1;
 	int dist1 = Math.min(Math.abs(maxID - chordID1), Math.abs(chordID1 - maxID));
 	int dist2 = Math.min(Math.abs(maxID - chordID2), Math.abs(chordID2 - maxID));
@@ -233,7 +220,7 @@ public class Member {
 	   dist = max + dist;
 	}
 	return dist;
-   }
+   }*/
    
    // if a is to the right of b, return true, else false
    
@@ -246,6 +233,17 @@ public class Member {
 	  
    }
    
+   public int findFingerTableSlot(MemberInfo newEntry){
+	int slot = this.myInfo.chordIDLength;
+
+	for(int i = 0; i < this.myInfo.chordIDLength; i++){
+	   //System.out.println(((myInfo.chordID + Math.pow(2, i)) % Math.pow(2, myInfo.chordIDLength)));
+	   if( this.compareChordIds( ((this.myInfo.chordID + Math.pow(2, i)) % Math.pow(2, this.myInfo.chordIDLength)), newEntry.chordID) ){
+		slot = i;
+	   }
+	}
+	return slot;
+   }
 
    public void addFingerTableEntry(MemberInfo newEntry){
 	//System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
@@ -266,7 +264,7 @@ public class Member {
 	if(this.predecessor == null){
 	   this.predecessor = neighbor;
 	}
-	//It took me like half an hour to figure out how to decide if a new machine was a better predecessor
+/*	//It took me like half an hour to figure out how to decide if a new machine was a better predecessor
 	// than a previously assigned predecessor with modulus number lines
 	//It makes sense if you draw a modulus circle and place the three nodes in various configurations
 	else if( (this.myInfo.chordID < this.predecessor.chordID) && (this.myInfo.chordID < neighbor.chordID) && (this.predecessor.chordID < neighbor.chordID) ){
@@ -277,6 +275,9 @@ public class Member {
 	}
 	else if( (neighbor.chordID < this.myInfo.chordID) && (this.myInfo.chordID < this.predecessor.chordID) && (neighbor.chordID < this.predecessor.chordID) ){
 	   this.predecessor = neighbor;
+	}*/
+	else if( this.compareChordIds(this.myInfo.chordID, neighbor.chordID) ){
+	   this.predecessor = neighbor;
 	}
    }
 
@@ -284,7 +285,7 @@ public class Member {
 	if(this.fingerTable[0] == null){
 	   this.fingerTable[0] = neighbor;
 	}
-	//Again, modulus number lines are hard. There is definitely a better way to do this.
+/*	//Again, modulus number lines are hard. There is definitely a better way to do this.
 	else if( (this.myInfo.chordID < neighbor.chordID) && (neighbor.chordID < this.fingerTable[0].chordID) && (this.myInfo.chordID < this.fingerTable[0].chordID) ){
 	   this.fingerTable[0] = neighbor;
 	}
@@ -292,6 +293,9 @@ public class Member {
 	   this.fingerTable[0] = neighbor;
 	}
 	else if( (neighbor.chordID > this.myInfo.chordID) && (this.myInfo.chordID > this.fingerTable[0].chordID) && (neighbor.chordID > this.fingerTable[0].chordID) ){
+	   this.fingerTable[0] = neighbor;
+	}*/
+	else if( this.compareChordIds(neighbor.chordID, this.myInfo.chordID) ){
 	   this.fingerTable[0] = neighbor;
 	}
    }
