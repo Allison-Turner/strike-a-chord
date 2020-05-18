@@ -121,15 +121,21 @@ public class Member {
 
 		   if((i > 0) && (this.fingerTable[i - 1] != null) && (this.fingerTable[i].chordID < this.fingerTable[i - 1].chordID)){
 			if((this.fingerTable[i].chordID + Math.pow(2, this.myInfo.chordIDLength)) > file.chordID){
+			   System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAA");
+			   System.out.println(this.fingerTable[i].IP.toString() + " " + this.fingerTable[i].chordID);
 			   return this.fingerTable[i];
 			}
 		   }
 
 		   if(this.fingerTable[i].chordID > file.chordID){
+			System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+			System.out.println(this.fingerTable[i].IP.toString() + " " + this.fingerTable[i].chordID);
 			return this.fingerTable[i];
 		   }
 		}
 	   }
+	   System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCC");
+	   System.out.println(this.fingerTable[potentialStorer].IP.toString() + " " + this.fingerTable[potentialStorer].chordID);
 	   return this.fingerTable[potentialStorer];
 	}
    }
@@ -212,7 +218,7 @@ public class Member {
    }
 
    public void addFingerTableEntry(MemberInfo newEntry){
-	System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
+	//System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
 	int slot = findFingerTableSlot(newEntry);
 	//System.out.println(newEntry.chordID + " would belong in slot " + slot);
 
@@ -221,7 +227,7 @@ public class Member {
 	}
 	else if((this.fingerTable[slot] == null) || (this.fingerTable[slot].chordID < newEntry.chordID) ){
 	   this.fingerTable[slot] = newEntry;
-	   System.out.println("Added " + newEntry.chordID + " to slot " + slot);
+	   //System.out.println("Added " + newEntry.chordID + " to slot " + slot);
 	}
    }
 
@@ -332,7 +338,7 @@ public class Member {
 	//We give the ReceivingSocket and Stabilizer handles on the invoking Member for when they 
 	//need to invoke a process that alters the Member's connectivity info or open a SendingSocket
 	member.pool.execute(new ReceivingSocket(member));
-	member.pool.execute(new Stabilizer(member));
+	//member.pool.execute(new Stabilizer(member));
 
 	Scanner userInput = new Scanner(System.in);
 	String[] command;
