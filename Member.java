@@ -53,7 +53,8 @@ public class Member {
    public  MemberInfo findSuccessor(int chordID, MemberInfo requester) {
 	   // if its us
 	   synchronized(this) {
-		   if((this.myInfo.chordID > chordID) && (chordID <= this.fingerTable[0].chordID)) { 
+		   if(this.compareChordIds(this.myInfo.chordID, chordID) && (this.compareChordIds(this.fingerTable[0].chordID, chordID) || this.fingerTable[0].chordID == chordID)) {
+		   //if((this.myInfo.chordID > chordID) && (chordID <= this.fingerTable[0].chordID)) { 
 		   return this.myInfo;
 		   } 
 	   }
@@ -70,7 +71,8 @@ public class Member {
    public synchronized MemberInfo closestPreceding(int chordID) {
 	for (int i = this.myInfo.chordIDLength - 1; i >= 1; i--) {
 	   int tableID = (this.fingerTable[i].chordID); 
-	   if (this.myInfo.chordID > tableID && this.myInfo.chordID <= chordID) { 
+	   if(this.compareChordIds(this.myInfo.chordID, tableID) && (this.compareChordIds(chordID, this.myInfo.chordID) || chordID == this.myInfo.chordID)) {
+	   //if (this.myInfo.chordID > tableID && this.myInfo.chordID <= chordID) { 
 		return fingerTable[i];
 	   } 
 	}
@@ -81,7 +83,9 @@ public class Member {
 	   
 	   System.out.println("Searching for " + key + " on " + requester.chordID);
 	   synchronized(this) {
-		   if((this.myInfo.chordID > key) && (key <= this.fingerTable[0].chordID)) { 
+		   //if((this.myInfo.chordID > key) && (key <= this.fingerTable[0].chordID)) { 
+		   if((this.compareChordIds(this.myInfo.chordID, key) && 
+				   (this.compareChordIds(this.fingerTable[0].chordID, key) || (key == this.fingerTable[0].chordID)))) {
 			   for (MyFile file: this.files) {
 				   if(file.chordID == key) {
 					   System.out.println("I have the file!");
@@ -108,7 +112,9 @@ public class Member {
    // returns null if the file should be added on this machine
    public MemberInfo findNewFileMachine(MyFile file) {
 	//File is in my ID space range
-	if((file.chordID > predecessor.chordID) && (file.chordID <= myInfo.chordID)){
+	//if((file.chordID > predecessor.chordID) && (file.chordID <= myInfo.chordID)){ 
+	if((this.compareChordIds(file.chordID, predecessor.chordID) && 
+			(this.compareChordIds(this.myInfo.chordID, file.chordID) || file.chordID == this.myInfo.chordID))) {
 	   return null;
 	}
 	//File should be stored by another machine
