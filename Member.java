@@ -238,8 +238,7 @@ public class Member {
 
 	for(int i = 0; i < this.myInfo.chordIDLength; i++){
 	   int maxI = ( (this.myInfo.chordID + ((int) Math.pow(2, i)) ) % ((int) Math.pow(2, this.myInfo.chordIDLength)) );
-	   //System.out.println( maxI );
-	   if( newEntry.chordID <= maxI ){
+	   if( this.compareChordIds(maxI, newEntry.chordID)){
 		slot = i;
 	   }
 	}
@@ -247,10 +246,10 @@ public class Member {
    }
 
    public void addFingerTableEntry(MemberInfo newEntry){
-	//System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
+	System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
 
 	int slot = findFingerTableSlot(newEntry);
-	//System.out.println(newEntry.chordID + " would belong in slot " + slot);
+	System.out.println(newEntry.chordID + " would belong in slot " + slot);
 
 	if(slot == this.myInfo.chordIDLength){
 	   //System.out.println("This machine's Chord ID is too far away to be included in the finger table.");
@@ -266,45 +265,23 @@ public class Member {
 	if(this.predecessor == null){
 	   this.predecessor = neighbor;
 	}
-/*	//It took me like half an hour to figure out how to decide if a new machine was a better predecessor
-	// than a previously assigned predecessor with modulus number lines
-	//It makes sense if you draw a modulus circle and place the three nodes in various configurations
-	else if( (this.myInfo.chordID < this.predecessor.chordID) && (this.myInfo.chordID < neighbor.chordID) && (this.predecessor.chordID < neighbor.chordID) ){
-	   this.predecessor = neighbor;
-	}
-	else if( (this.myInfo.chordID > neighbor.chordID) && (neighbor.chordID > predecessor.chordID) && (this.myInfo.chordID > this.predecessor.chordID) ){
-	   this.predecessor = neighbor;
-	}
-	else if( (neighbor.chordID < this.myInfo.chordID) && (this.myInfo.chordID < this.predecessor.chordID) && (neighbor.chordID < this.predecessor.chordID) ){
-	   this.predecessor = neighbor;
-	}*/
-	//else if( this.compareChordIds(this.myInfo.chordID, neighbor.chordID) ){
-	//else if( this.compareChordIds( neighbor.chordID, this.myInfo.chordID ) && this.compareChordIds(this.predecessor.chordID, neighbor.chordID) ){
 	else if( this.compareChordIds( this.myInfo.chordID, neighbor.chordID ) && this.compareChordIds(neighbor.chordID, this.predecessor.chordID) ){
 	   this.predecessor = neighbor;
 	}
    }
 
    public void setSuccessor(MemberInfo neighbor){
+	//No null successor
 	if(this.fingerTable[0] == null){
 	   this.fingerTable[0] = neighbor;
 	}
-/*	//Again, modulus number lines are hard. There is definitely a better way to do this.
-	else if( (this.myInfo.chordID < neighbor.chordID) && (neighbor.chordID < this.fingerTable[0].chordID) && (this.myInfo.chordID < this.fingerTable[0].chordID) ){
-	   this.fingerTable[0] = neighbor;
-	}
-	else if( (this.myInfo.chordID > this.fingerTable[0].chordID) && (this.fingerTable[0].chordID > neighbor.chordID) && (this.myInfo.chordID > neighbor.chordID) ){
-	   this.fingerTable[0] = neighbor;
-	}
-	else if( (neighbor.chordID > this.myInfo.chordID) && (this.myInfo.chordID > this.fingerTable[0].chordID) && (neighbor.chordID > this.fingerTable[0].chordID) ){
-	   this.fingerTable[0] = neighbor;
-	}*/
 	else if( this.compareChordIds(this.fingerTable[0].chordID, neighbor.chordID) && this.compareChordIds(neighbor.chordID, this.myInfo.chordID) ){
 	   this.fingerTable[0] = neighbor;
 	}
    }
 
    public synchronized void printFingerTable(){
+	System.out.println("------- Myself -------");
 	System.out.println("My Chord ID: " + this.myInfo.chordID);
 	System.out.println("My IP: " + this.myInfo.IP.toString());
 
