@@ -238,7 +238,7 @@ public class Member {
 
 	for(int i = 0; i < this.myInfo.chordIDLength; i++){
 	   int maxI = ( (this.myInfo.chordID + ((int) Math.pow(2, i)) ) % ((int) Math.pow(2, this.myInfo.chordIDLength)) );
-	   System.out.println( maxI );
+	   //System.out.println( maxI );
 	   if( newEntry.chordID <= maxI ){
 		slot = i;
 	   }
@@ -255,7 +255,7 @@ public class Member {
 	if(slot == this.myInfo.chordIDLength){
 	   //System.out.println("This machine's Chord ID is too far away to be included in the finger table.");
 	}
-	else if((this.fingerTable[slot] == null) || this.compareChordIds(this.fingerTable[slot].chordID, newEntry.chordID) ){
+	else if((this.fingerTable[slot] == null) || this.compareChordIds(newEntry.chordID, this.fingerTable[slot].chordID) ){
 	   this.fingerTable[slot] = newEntry;
 	   //System.out.println("Added " + newEntry.chordID + " to slot " + slot);
 	}
@@ -279,7 +279,8 @@ public class Member {
 	   this.predecessor = neighbor;
 	}*/
 	//else if( this.compareChordIds(this.myInfo.chordID, neighbor.chordID) ){
-	else if( this.compareChordIds( neighbor.chordID, this.myInfo.chordID ) && this.compareChordIds(this.predecessor.chordID, neighbor.chordID) ){
+	//else if( this.compareChordIds( neighbor.chordID, this.myInfo.chordID ) && this.compareChordIds(this.predecessor.chordID, neighbor.chordID) ){
+	else if( this.compareChordIds( neighbor.chordID, this.myInfo.chordID ) ){
 	   this.predecessor = neighbor;
 	}
    }
