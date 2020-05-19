@@ -280,7 +280,7 @@ public class Member {
 	}*/
 	//else if( this.compareChordIds(this.myInfo.chordID, neighbor.chordID) ){
 	//else if( this.compareChordIds( neighbor.chordID, this.myInfo.chordID ) && this.compareChordIds(this.predecessor.chordID, neighbor.chordID) ){
-	else if( this.compareChordIds( neighbor.chordID, this.myInfo.chordID ) ){
+	else if( this.compareChordIds( this.myInfo.chordID, neighbor.chordID ) ){
 	   this.predecessor = neighbor;
 	}
    }
