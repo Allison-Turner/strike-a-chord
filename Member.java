@@ -237,8 +237,9 @@ public class Member {
 	int slot = this.myInfo.chordIDLength;
 
 	for(int i = 0; i < this.myInfo.chordIDLength; i++){
-	   //System.out.println(((myInfo.chordID + Math.pow(2, i)) % Math.pow(2, myInfo.chordIDLength)));
-	   if( this.compareChordIds( ((this.myInfo.chordID + ((int) Math.pow(2, i))) % ((int) Math.pow(2, this.myInfo.chordIDLength))), newEntry.chordID) ){
+	   int maxI = ( (myInfo.chordID + ((int) Math.pow(2, i)) ) % ((int) Math.pow(2, myInfo.chordIDLength)) );
+	   //System.out.println( ((myInfo.chordID + Math.pow(2, i)) % Math.pow(2, myInfo.chordIDLength)) );
+	   if( this.compareChordIds(newEntry.chordID, maxI) ){
 		slot = i;
 	   }
 	}
@@ -247,6 +248,7 @@ public class Member {
 
    public void addFingerTableEntry(MemberInfo newEntry){
 	//System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
+
 	int slot = findFingerTableSlot(newEntry);
 	//System.out.println(newEntry.chordID + " would belong in slot " + slot);
 
@@ -277,7 +279,7 @@ public class Member {
 	   this.predecessor = neighbor;
 	}*/
 	//else if( this.compareChordIds(this.myInfo.chordID, neighbor.chordID) ){
-	else if( this.compareChordIds( neighbor.chordID, this.myInfo.chordID ) ){
+	else if( this.compareChordIds( neighbor.chordID, this.myInfo.chordID ) && this.compareChordIds(neighbor.chordID, this.predecessor.chordID) ){
 	   this.predecessor = neighbor;
 	}
    }
@@ -296,7 +298,7 @@ public class Member {
 	else if( (neighbor.chordID > this.myInfo.chordID) && (this.myInfo.chordID > this.fingerTable[0].chordID) && (neighbor.chordID > this.fingerTable[0].chordID) ){
 	   this.fingerTable[0] = neighbor;
 	}*/
-	else if( this.compareChordIds(neighbor.chordID, this.myInfo.chordID) ){
+	else if( this.compareChordIds(this.fingerTable[0].chordID, neighbor.chordID) && this.compareChordIds(neighbor.chordID, this.myInfo.chordID) ){
 	   this.fingerTable[0] = neighbor;
 	}
    }
