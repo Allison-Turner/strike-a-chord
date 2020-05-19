@@ -277,7 +277,7 @@ public class Member {
 	   this.predecessor = neighbor;
 	}*/
 	//else if( this.compareChordIds(this.myInfo.chordID, neighbor.chordID) ){
-	else if( neighbor.chordID, this.compareChordIds(this.myInfo.chordID ) ){
+	else if( this.compareChordIds( neighbor.chordID, this.myInfo.chordID ) ){
 	   this.predecessor = neighbor;
 	}
    }
