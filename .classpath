@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path=""/>
+	<classpathentry kind="lib" path="/Users/Lily/Documents/My_Documents/Senior/cs_343/strike-a-chord/commons-codec-1.14/commons-codec-1.14.jar"/>
+	<classpathentry kind="output" path=""/>
+</classpath>
