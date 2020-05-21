@@ -21,6 +21,11 @@ The chord paper outlines ways for machines to join and leave the ring, as well a
 	- Checking predecessor liveness
 	- Asking the predecessor for their successor (to test for new joins between you and your predecessor)
 	- Checking finger table entries for new node information
+- ID Location
+	- Placing a file with an equal or closest larger value ID machine
+	- Locating a file by asking the highest ID machine that doesn't exceed the file's ID for either the file or to pass the message along
+	- Locating the successor of an ID
+	- Locating the predecessor of an ID
 These operations are application-independent, defining only the basis on which the system will store and locate files.
 
 ## How To Use Our Code ## 
