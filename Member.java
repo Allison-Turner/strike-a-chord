@@ -8,11 +8,9 @@ public class Member {
   
    public MemberInfo myInfo; 
    
-   private ExecutorService pool;  
-   //public ServerSocket listener;
+   private ExecutorService pool;
    
    private MemberInfo predecessor;
-   //private MemberInfo[] successors;
    private MemberInfo[] fingerTable;
 
    ArrayList<MyFile> files;
@@ -42,19 +40,17 @@ public class Member {
    }
    
    /*
-   Add any functions that will create a SendSocket here, whether it's the ReceivingSocket class or the main workflow that will call them
+   Add any functions that will create a SendSocket here, whether it's the ReceivingSocket class, Stabilizer class, or the main workflow that will call them
    The ReceivingSocket and Stabilizer properties Member myself exist so they can call these functions
    */
 	
 	 
-   /* Returns a MemberInfo with the successor of the chordID if we can find it in our fingerTable
-   * Else, send a message to the closest chordID in the fingerTable and return null
-   */
+   //Returns a MemberInfo with the successor of the chordID if we can find it in our fingerTable
+   //Else, send a message to the closest chordID in the fingerTable and return null
    public  MemberInfo findSuccessor(int chordID, MemberInfo requester) {
-	   // if its us
+	   // if it's us
 	   synchronized(this) {
 		   if(this.compareChordIds(this.myInfo.chordID, chordID) && (this.compareChordIds(this.fingerTable[0].chordID, chordID) || this.fingerTable[0].chordID == chordID)) {
-		   //if((this.myInfo.chordID > chordID) && (chordID <= this.fingerTable[0].chordID)) { 
 		   return this.myInfo;
 		   } 
 	   }
@@ -72,7 +68,6 @@ public class Member {
 	for (int i = this.myInfo.chordIDLength - 1; i >= 1; i--) {
 	   int tableID = (this.fingerTable[i].chordID); 
 	   if(this.compareChordIds(this.myInfo.chordID, tableID) && (this.compareChordIds(chordID, this.myInfo.chordID) || chordID == this.myInfo.chordID)) {
-	   //if (this.myInfo.chordID > tableID && this.myInfo.chordID <= chordID) { 
 		return fingerTable[i];
 	   } 
 	}
@@ -112,7 +107,6 @@ public class Member {
    // returns null if the file should be added on this machine
    public MemberInfo findNewFileMachine(MyFile file) {
 	//File is in my ID space range
-	//if((file.chordID > predecessor.chordID) && (file.chordID <= myInfo.chordID)){ 
 	if((this.compareChordIds(file.chordID, predecessor.chordID) && 
 			(this.compareChordIds(this.myInfo.chordID, file.chordID) || file.chordID == this.myInfo.chordID))) {
 	   return null;
@@ -124,33 +118,12 @@ public class Member {
 	   //Find the machine with the lowest Chord ID that's still larger than the file's Chord ID
 	   
 	   for(int i = 0; i < this.fingerTable.length; i++){
-/*		if(fingerTable[i] != null){
-
-		   //Store the index of the last nonempty finger table entry to use as the farthest reachable Chord ID just in case
-		   potentialStorer = i;
-
-		   if((i > 0) && (this.fingerTable[i - 1] != null) && (this.fingerTable[i].chordID < this.fingerTable[i - 1].chordID)){
-			if((this.fingerTable[i].chordID + Math.pow(2, this.myInfo.chordIDLength)) > file.chordID){
-			   //System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAA");
-			   //System.out.println(this.fingerTable[i].IP.toString() + " " + this.fingerTable[i].chordID);
-			   return this.fingerTable[i];
-			}
-		   }
-
-		   if(this.fingerTable[i].chordID > file.chordID){
-			//System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
-			//System.out.println(this.fingerTable[i].IP.toString() + " " + this.fingerTable[i].chordID);
-			return this.fingerTable[i];
-		   }
-		}*/
-
 		if( this.compareChordIds( this.fingerTable[i].chordID, file.chordID ) ){
 		   potentialStorer = i;
 		}
 
 	   }
-	   //System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCC");
-	   //System.out.println(this.fingerTable[potentialStorer].IP.toString() + " " + this.fingerTable[potentialStorer].chordID);
+
 	   return this.fingerTable[potentialStorer];
 	}
    }
@@ -162,23 +135,19 @@ public class Member {
 	   System.out.println("Added file " + file.fileName + " with Chord ID " + file.chordID + " to my records.");
 	}
 	else{
-	   /*if(this.findForwardIDDistance(hostMachine.chordID, file.chordID) > this.findForwardIDDistance(originator.chordID, file.chordID) ){
-		System.out.println("The distance between the next hop and the desired ID is greater than the distance between the originator and the desired ID.");
-	   }*/
 	   this.send(new AddFileMessage(file, originator, hostMachine));
 	   System.out.println("Sent request to add file " + file.fileName + " with Chord ID " + file.chordID + " to "
 				+ hostMachine.IP.toString() + " with Chord ID " + hostMachine.chordID);
 	}
    }
 	 
-   // Unimplmemented error -- check that things have joined correctly but we're not implementing joining
+   // Check that things have joined correctly but we're not implementing joining
    public synchronized void stabilize(){
 	   
-	System.out.println("Stabilizing.");
 	//Request predecessor's successor
-	// add chordID
-	//RequestSuccessor m = new RequestSuccessor(myInfo, predecessor); 
-	//this.pool.execute(new SendingSocket(m));
+	RequestSuccessor m = new RequestSuccessor(myInfo, predecessor); 
+	this.pool.execute(new SendingSocket(m));
+
 	//Check finger table entries
    }
 
@@ -208,32 +177,13 @@ public class Member {
       this.fingerTable = new MemberInfo[myInfo.chordIDLength]; 
       System.arraycopy(ft, 0, this.fingerTable, 0, myInfo.chordIDLength); 
     }
-
-/*   public int findIDProximity(int chordID1, int chordID2){
-	int maxID = ((int) Math.pow(2, this.myInfo.chordIDLength)) - 1;
-	int dist1 = Math.min(Math.abs(maxID - chordID1), Math.abs(chordID1 - maxID));
-	int dist2 = Math.min(Math.abs(maxID - chordID2), Math.abs(chordID2 - maxID));
-	int distance = Math.min((dist1 - dist2), (dist2 - dist1));
-	return distance;
-   }
-
-   public int findForwardIDDistance(int higherChordID, int lowerChordID){
-	int max = (int) Math.pow(2, this.myInfo.chordIDLength);
-	int dist1 = max - lowerChordID;
-	int dist2 = max - higherChordID;
-	int dist = (dist1 - dist2);
-	if(dist < 0){
-	   dist = max + dist;
-	}
-	return dist;
-   }*/
    
    // if a is to the right of b, return true, else false
-   
    public boolean compareChordIds(int a, int b) {
 	   if (Math.abs(a - b) > Math.pow(2, this.myInfo.chordIDLength - 1)) {
 		   return b > a; 
-	   } else {
+	   } 
+	   else {
 		   return a > b;
 	   }
 	  
@@ -252,17 +202,10 @@ public class Member {
    }
 
    public void addFingerTableEntry(MemberInfo newEntry){
-	System.out.println("IP: " + newEntry.IP.toString() + " Chord ID: " + newEntry.chordID);
-
 	int slot = findFingerTableSlot(newEntry);
-	System.out.println(newEntry.chordID + " would belong in slot " + slot);
 
-	if(slot == this.myInfo.chordIDLength){
-	   //System.out.println("This machine's Chord ID is too far away to be included in the finger table.");
-	}
-	else if((this.fingerTable[slot] == null) || this.compareChordIds(newEntry.chordID, this.fingerTable[slot].chordID) ){
+	if(slot < this.myInfo.chordIDLength && ((this.fingerTable[slot] == null) || this.compareChordIds(newEntry.chordID, this.fingerTable[slot].chordID) )){
 	   this.fingerTable[slot] = newEntry;
-	   //System.out.println("Added " + newEntry.chordID + " to slot " + slot);
 	}
    }
 
@@ -347,7 +290,6 @@ public class Member {
 	for(int i = 1; i < member.fingerTable.length; i++){
 	   if(member.fingerTable[i] == null){
 		member.fingerTable[i] = lastNonNull;
-		//System.out.println("Copying last non-null finger table entry into slot " + i);
 	   }
 	   else{
 		lastNonNull = member.fingerTable[i];
@@ -359,7 +301,7 @@ public class Member {
 	//We give the ReceivingSocket and Stabilizer handles on the invoking Member for when they 
 	//need to invoke a process that alters the Member's connectivity info or open a SendingSocket
 	member.pool.execute(new ReceivingSocket(member));
-	//member.pool.execute(new Stabilizer(member));
+	member.pool.execute(new Stabilizer(member));
 
 	Scanner userInput = new Scanner(System.in);
 	String[] command;
