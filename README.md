@@ -107,7 +107,7 @@ Expected behavior:
 For each command, output is expected on the machine the command was run on. 
 
 - Add: 
-	- ALLISON WRITE THIS IM NOT SURE WHAT ADD OUTPUTS
+	- The machine requesting to add a file should output that it is requesting to add a file with a specific key. Then, the machine the file was added to will report that it added the file. You should now be able to use search to find this file. 
 - Search: 
 	- If the file cannot be found in the ring, the machine sending the search message will print the machine where the file should have been. If the file can be found in the ring, it will print that it found the file, and also the chord ID of the machine it found the file on. 
 - Successor: 
